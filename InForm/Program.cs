@@ -1,4 +1,4 @@
-using InForm.Components;
+using InForm;
 
 var builder = WebApplication.CreateBuilder(args);
 

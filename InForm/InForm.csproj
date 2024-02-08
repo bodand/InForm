@@ -4,10 +4,34 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>InForm</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="js-src\" />
+      <AdditionalFiles Include="App.razor" />
+      <AdditionalFiles Include="Features\Layout\MainLayout.razor" />
+      <AdditionalFiles Include="Routes.razor" />
+      <AdditionalFiles Include="_Imports.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Features\Forms\OpenForm\OpenForm.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>OpenForm.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Features\Forms\OpenForm\OpenForm.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>OpenForm.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

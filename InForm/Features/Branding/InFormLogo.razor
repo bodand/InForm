@@ -1,0 +1,18 @@
+﻿<div class="inline @ClassForCurrentSize">
+    In<span class="font-bold">Form</span>
+</div>
+
+@code {
+
+    [Parameter]
+    public LogoSize Size { get; set; } = LogoSize.Header;
+
+    private string ClassForCurrentSize => Size switch
+    {
+        LogoSize.Header => "text-6xl",
+        LogoSize.NavRow => "text-lg",
+        LogoSize.Inline => "text-base",
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+}
