@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace InForms.Web.Features.OpenForm;
+namespace InForm.Web.Features.OpenForm;
 
 public class OpenFormModel
 {

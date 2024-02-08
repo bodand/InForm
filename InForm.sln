@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelConfigurationGenerator", "ModelConfigurationGenerator\ModelConfigurationGenerator.csproj", "{19972532-7EA0-4CD8-910E-CD7B96CD1D61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InForms.Web", "InForms.Web\InForms.Web.csproj", "{DE24F29B-587C-4CC8-A4FB-8FBE34723C8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InForm.Web", "InForm.Web\InForm.Web.csproj", "{DE24F29B-587C-4CC8-A4FB-8FBE34723C8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InForm.Server", "InForm.Server\InForm.Server.csproj", "{6A06FDEC-8591-4D13-9A17-EF3F248ECE4A}"
 EndProject

@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 
-namespace InForms.Web.Features.CreateForm;
+namespace InForm.Web.Features.CreateForm;
 
 public class CreateFormModel
 {
