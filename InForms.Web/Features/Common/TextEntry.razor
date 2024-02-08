@@ -1,8 +1,8 @@
 @using System.Linq.Expressions
 @inherits InputBase<string>
 
-<label for="form_id" class="text-zinc-700 dark:text-zinc-300">FormID</label>
-<input id="form_id"
+<label for="@Id" class="@Class text-zinc-700 dark:text-zinc-300">@Label</label>
+<input id="@Id"
        class="block w-full px-0 bg-slate-100 dark:bg-slate-950 text-zinc-950
               dark:text-zinc-100 border-0 border-b-2 border-slate-400
               focus:border-slate-950 focus:dark:border-slate-50 focus:ring-0"
@@ -11,6 +11,9 @@
 <ValidationMessage class="w-full" For="@ValidationFor"/>
 
 @code {
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
 
     [Parameter, EditorRequired]
     public Expression<Func<string>> ValidationFor { get; set; } = default!;
