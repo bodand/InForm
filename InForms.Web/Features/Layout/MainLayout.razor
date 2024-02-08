@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<main class="flex flex-col w-full h-full">
+    <div class="fixed flex w-full items-center border-solid border-b-2 border-slate-400 h-10 px-4
+                bg-slate-100 dark:bg-slate-950 z-10">
+        <InFormLogo Size="LogoSize.NavRow"/>
+    </div>
+
+    <article class="flex flex-col px-4 h-full">
+        @Body
+    </article>
+</main>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

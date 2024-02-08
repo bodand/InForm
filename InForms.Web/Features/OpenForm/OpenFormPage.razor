@@ -1,0 +1,51 @@
+﻿@page "/"
+@inject ILogger<OpenFormPage> Logger
+@layout BlankLayout
+
+<PageTitle>InForm - Open form</PageTitle>
+
+<InFormLogo Size="LogoSize.Header"/>
+<EditForm FormName="open_form"
+          Model="SearchForm"
+          OnInvalidSubmit="InvalidForm"
+          OnValidSubmit="DoOpenForm"
+          class="flex flex-col items-start py-4">
+    <DataAnnotationsValidator/>
+
+    <TextEntry Id="form_id"
+               Label="FormID"
+               @bind-Value="SearchForm!.FormId"
+               ValidationFor="@(() => SearchForm!.FormId)">
+    </TextEntry>
+
+    <div class="w-full flex flex-row-reverse">
+        <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                       hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                       hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+            Open
+        </button>
+    </div>
+</EditForm>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public OpenFormModel? SearchForm { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SearchForm ??= new();
+    }
+
+    private async Task DoOpenForm()
+    {
+        await Task.Delay(400);
+    }
+
+    private async Task InvalidForm()
+    {
+        Logger.LogWarning("AAAAA");
+        await Task.Delay(400);
+    }
+
+}

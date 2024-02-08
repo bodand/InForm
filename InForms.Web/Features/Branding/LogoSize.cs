@@ -1,4 +1,4 @@
-﻿namespace InForm.Features.Branding;
+﻿namespace InForms.Web.Features.Branding;
 
 public enum LogoSize
 {
