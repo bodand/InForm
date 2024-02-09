@@ -1,45 +1,48 @@
-var builder = WebApplication.CreateBuilder(args);
+using InForm.Server.Db;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
+
+const string corsPolicy = "";
+
+builder.Services.AddCors(ops =>
+{
+	ops.AddPolicy(corsPolicy, policy =>
+	{
+		var origins = new List<string>();
+		config.GetSection("Cors:Origins").Bind(origins);
+		policy.WithOrigins([.. origins])
+			  .AllowAnyMethod()
+			  .AllowAnyHeader();
+	});
+});
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(ops =>
+{
+	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	ops.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+	ops.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "InForm.Server.Core.xml"));
+});
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<InFormDbContext>(ops =>
+{
+	ops.UseNpgsql(config.GetConnectionString("InFormDb"));
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+app.UseCors(policyName: corsPolicy);
+app.MapControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering",
-    "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+await app.RunAsync();

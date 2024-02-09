@@ -1,8 +1,6 @@
 using FluentValidation;
-using InForm.Web.Features.CreateForm.Elements;
-using InForm.Web.Features.CreateForm.Elements.StringElement;
 
-namespace InForm.Web.Features.CreateForm;
+namespace InForm.Client.Features.Forms;
 
 public class CreateFormModel
 {
@@ -37,6 +35,6 @@ public class CreateFormValidator : AbstractValidator<CreateFormModel>
             {
                 poly.Add(new StringElementValidator());
             })
-            .SetValidator(new ElementValidator()); 
+            .SetValidator(new ElementValidator());
     }
 }

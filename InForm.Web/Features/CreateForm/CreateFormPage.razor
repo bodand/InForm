@@ -1,9 +1,11 @@
 @page "/Create"
+@inject IFormsService FormsService
 @implements IDisposable
 
 <EditForm class="h-full flex flex-col md:flex-row"
           FormName="create_form"
-          EditContext="_editContext">
+          EditContext="_editContext"
+          OnValidSubmit="SendCreateForm">
     <FluentValidationValidator/>
 
     <div class="flex flex-col h-min md:h-full w-full md:w-1/4 md:pr-4 mt-6 border-solid">
@@ -66,6 +68,11 @@
     private EditContext _editContext = default!;
 
     public CreateFormModel CreateForm { get; set; } = new();
+
+    private async Task SendCreateForm()
+    {
+        await FormsService.CreateForm(CreateForm);
+    }
 
     protected override void OnInitialized()
     {
