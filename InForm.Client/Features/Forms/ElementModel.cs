@@ -3,21 +3,21 @@ using InForm.Server.Core.Features.Forms;
 
 namespace InForm.Client.Features.Forms;
 
-public abstract class ElementModel(CreateFormModel parent)
+public abstract class ElementModel(FormModel parent)
 {
     public string Title { get; set; } = string.Empty;
     public string? Subtitle { get; set; }
     public bool Required { get; set; }
-    public CreateFormModel Parent { get; } = parent;
+    public FormModel Parent => parent;
 
     public void Delete() => Parent.RemoveElement(this);
 
     public abstract CreateFormElement ToDto();
 }
 
-public class ElementValidator : AbstractValidator<ElementModel>
+public class CreateElementValidator : AbstractValidator<ElementModel>
 {
-    public ElementValidator()
+    public CreateElementValidator()
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("A title is required")

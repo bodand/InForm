@@ -1,10 +1,10 @@
 ﻿using InForm.Client.Features.Forms.Contracts;
-using InForm.Client.Features.Forms.Impl;
+using InForm.Client.Features.Forms.Contracts.Impl;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InForm.Client
 {
-	public static class ServiceExtensions
+    public static class ServiceExtensions
 	{
 		public static IServiceCollection AddInFormServer(this IServiceCollection services)
 		{

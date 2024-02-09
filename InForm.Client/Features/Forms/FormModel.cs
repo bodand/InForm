@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace InForm.Client.Features.Forms;
 
-public class CreateFormModel
+public class FormModel
 {
     public string Title { get; set; } = string.Empty;
 
@@ -18,7 +18,7 @@ public class CreateFormModel
     }
 }
 
-public class CreateFormValidator : AbstractValidator<CreateFormModel>
+public class CreateFormValidator : AbstractValidator<FormModel>
 {
     public CreateFormValidator()
     {
@@ -35,6 +35,6 @@ public class CreateFormValidator : AbstractValidator<CreateFormModel>
             {
                 poly.Add(new StringElementValidator());
             })
-            .SetValidator(new ElementValidator());
+            .SetValidator(new CreateElementValidator());
     }
 }

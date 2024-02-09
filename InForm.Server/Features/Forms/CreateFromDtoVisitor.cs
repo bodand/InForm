@@ -4,7 +4,7 @@ using InForm.Server.Core.Features.Forms;
 
 namespace InForm.Server.Features.Forms;
 
-public class CreateFromDtoVisitor(Form parentForm) : 
+internal class CreateFromDtoVisitor(Form parentForm) : 
     ITypedVisitor<CreateStringElement, StringFormElement>
 {
     public StringFormElement Visit(CreateStringElement visited) =>

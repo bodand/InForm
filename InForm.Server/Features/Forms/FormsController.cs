@@ -12,9 +12,19 @@ public class FormsController(InFormDbContext dbContext) : ControllerBase
 {
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetForm(Guid id)
+    public async Task<ActionResult<GetFormReponse>> GetForm(Guid id)
     {
-        return Ok();
+        var form = await dbContext.Forms.AsNoTracking()
+                                        .Include(x => x.FormElementBases)
+                                        .SingleOrDefaultAsync(x => x.IdGuid == id);
+        if (form is null) return NotFound();
+
+        var toDtoVisitor = new ToGetDtoVisitor();
+        var elems = form.FormElementBases.AsParallel()
+                                         .Select(x => x.Accept(toDtoVisitor)!)
+                                         .ToList();
+
+        return new GetFormReponse(form.IdGuid, form.Title, form.Subtitle, elems);
     }
 
     [HttpPost]

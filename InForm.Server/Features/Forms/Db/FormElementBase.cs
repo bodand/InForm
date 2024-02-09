@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using InForm.Server.Core.Features.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace InForm.Features.Forms.Db;
 
-public class FormElementBase
+public abstract class FormElementBase : IVisitable
 {
     public long Id { get; set; }
 
@@ -15,4 +16,7 @@ public class FormElementBase
     public bool Required { get; set; }
 
     public Form? ParentForm { get; set; }
+
+    public abstract void Accept(IVisitor visitor);
+    public abstract TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : notnull;
 }

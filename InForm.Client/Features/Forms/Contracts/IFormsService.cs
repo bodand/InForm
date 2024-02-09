@@ -2,5 +2,6 @@
 
 public interface IFormsService
 {
-	Task<Guid> CreateForm(CreateFormModel model);
+	Task<FormModel> GetForm(Guid id);
+	Task<Guid> CreateForm(FormModel model);
 }
