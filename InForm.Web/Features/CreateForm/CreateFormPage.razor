@@ -1,10 +1,9 @@
 @page "/Create"
-@using InForm.Web.Features.CreateForm.Elements
+@implements IDisposable
 
-<div class="h-12"></div>
 <EditForm class="h-full flex flex-col md:flex-row"
           FormName="create_form"
-          Model="CreateForm">
+          EditContext="_editContext">
     <FluentValidationValidator/>
 
     <div class="flex flex-col h-min md:h-full w-full md:w-1/4 md:pr-4 mt-6 border-solid">
@@ -27,9 +26,29 @@
 
     <div class="flex flex-col md:pl-4 w-full">
         <div class="mb-6">
-            <h2 class="block text-xl md:text-3xl w-fit border-solid border-b-2 border-slate-400">
-                Form elements
-            </h2>
+            <div class="flex flex-row items-end justify-between">
+                <h2 class="block text-xl md:text-3xl w-fit h-fit border-solid border-b-2 border-slate-400">
+                    Form elements
+                </h2>
+                <div class="relative flex flex-row items-center mx-2 border-solid border-b-2 border-slate-400 p-2 focus:ring-0
+                            hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                            hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100"
+                     @onmouseenter="OpenDropDown"
+                     @onmouseleave="CloseDropDown">
+                    <div class="mr-1">
+                        Add element
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <div class="absolute top-10 left-0 @DropDownVisibility p-2 w-full
+                                text-zinc-100 bg-slate-950 dark:text-zinc-950 dark:bg-slate-100">
+                        <button type="button" @onclick=@(() => AddNewElement<StringElementModel>())>
+                            Text element
+                        </button>
+                    </div>
+                </div>
+            </div>
             <ValidationMessage For="@(() => CreateForm.ElementModels)"></ValidationMessage>
         </div>
 
@@ -41,13 +60,44 @@
 </EditForm>
 
 @code {
+    private bool _dropDownVisible = false;
+    private string DropDownVisibility => _dropDownVisible ? null : "hidden";
 
-    public CreateFormModel CreateForm { get; set; } = new()
+    private EditContext _editContext = default!;
+
+    public CreateFormModel CreateForm { get; set; } = new();
+
+    protected override void OnInitialized()
     {
-        ElementModels =
-        [
-            new StringElementModel()
-        ]
-    };
+        _editContext = new EditContext(CreateForm);
+        _editContext.SetFieldCssClassProvider(new TailwindCssClassProvider());
+        CreateForm.ElementDeleted += ElementDeletedCallback;
+    }
 
+    private void AddNewElement<TElement>()
+    where TElement : ElementModel
+    {
+        var elem = (TElement)Activator.CreateInstance(typeof(TElement), CreateForm)!;
+        CreateForm.ElementModels.Add(elem);
+        StateHasChanged();
+    }
+
+    private void OpenDropDown(MouseEventArgs e)
+    {
+        _dropDownVisible = true;
+        StateHasChanged();
+    }
+
+    private void CloseDropDown(MouseEventArgs e)
+    {
+        _dropDownVisible = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CreateForm.ElementDeleted -= ElementDeletedCallback;
+    }
+
+    private void ElementDeletedCallback() => StateHasChanged();
 }

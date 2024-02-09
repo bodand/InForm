@@ -1,0 +1,32 @@
+﻿@using System.Linq.Expressions
+@inherits InputBase<bool>
+
+<div class="@Class flex flex-row">
+	<input id="@Id"
+		   type="checkbox"
+		   class="mr-2"
+		   @bind="CurrentValue"
+		   autocomplete="off" />
+	<label for="@Id" class="w-max text-zinc-700 dark:text-zinc-300">@Label</label>
+	<ValidationMessage class="w-full" For="@ValidationFor" />
+</div>
+
+@code {
+
+	[Parameter]
+	public string Class { get; set; } = string.Empty;
+
+	[Parameter, EditorRequired]
+	public Expression<Func<bool>> ValidationFor { get; set; } = default!;
+
+	[Parameter]
+	public string? Id { get; set; }
+
+	[Parameter, EditorRequired]
+	public string Label { get; set; } = default!;
+
+	protected override bool TryParseValueFromString(string? value, out bool result, out string? validationErrorMessage)
+	{
+		throw new NotImplementedException();
+	}
+}

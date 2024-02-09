@@ -1,4 +1,6 @@
 using FluentValidation;
+using InForm.Web.Features.CreateForm.Elements;
+using InForm.Web.Features.CreateForm.Elements.StringElement;
 
 namespace InForm.Web.Features.CreateForm;
 
@@ -8,7 +10,14 @@ public class CreateFormModel
 
     public string Subtitle { get; set; } = string.Empty;
 
+    public event Action? ElementDeleted;
     public List<ElementModel> ElementModels { get; set; } = [];
+
+    public void RemoveElement(ElementModel child)
+    {
+        ElementModels.Remove(child);
+        ElementDeleted?.Invoke();
+    }
 }
 
 public class CreateFormValidator : AbstractValidator<CreateFormModel>
@@ -24,6 +33,10 @@ public class CreateFormValidator : AbstractValidator<CreateFormModel>
         RuleFor(x => x.ElementModels)
             .NotEmpty().WithMessage("At least one form element is required");
         RuleForEach(x => x.ElementModels)
-            .SetValidator(new ElementValidator()); // todo polymorphic validator
+            .SetInheritanceValidator(poly =>
+            {
+                poly.Add(new StringElementValidator());
+            })
+            .SetValidator(new ElementValidator()); 
     }
 }

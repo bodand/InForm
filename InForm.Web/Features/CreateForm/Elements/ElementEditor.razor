@@ -1,0 +1,18 @@
+@using System.Linq.Expressions
+@using InForm.Web.Features.CreateForm.Elements.StringElement
+@inherits InputBase<ElementModel>
+
+<div class="my-4">
+	@switch (CurrentValue)
+	{
+		case StringElementModel stringElementModel:
+			<StringElementEditor @bind-Value=stringElementModel />
+			break;
+	}
+</div>
+
+@code {
+	protected override bool TryParseValueFromString(string? value, out ElementModel result, out string? validationErrorMessage)
+	=> throw new NotImplementedException();
+
+}

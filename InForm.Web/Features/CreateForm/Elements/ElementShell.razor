@@ -1,0 +1,25 @@
+﻿<div class="border-solid border-2 border-slate-400 p-4">
+	<div class="flex flex-row justify-between">
+		<h3 class="text-base md:text-lg w-fit border-solid border-b-2 border-slate-400">Text element</h3>
+		<button class="w-fit border-solid border-b-2 border-rose-500 hover:border-slate-950 hover:dark:border-slate-50
+					   hover:bg-rose-500 p-2" 
+				type="button"
+				@onclick=@(() => Element.Delete())>
+			Delete element
+		</button>
+	</div>
+
+	@ChildContent
+</div>
+
+
+@code {
+	[Parameter, EditorRequired]
+	public string Title { get; set; } = default!;
+
+	[Parameter, EditorRequired]
+	public ElementModel Element { get; set; } = default!;
+
+	[Parameter, EditorRequired]
+	public RenderFragment ChildContent { get; set; } = default!;
+}

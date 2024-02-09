@@ -1,34 +1,37 @@
 @using System.Linq.Expressions
 @inherits InputBase<string>
 
-<label for="@Id" class="@Class text-zinc-700 dark:text-zinc-300">@Label</label>
-<input id="@Id"
-       class="block w-full px-0 bg-slate-100 dark:bg-slate-950 text-zinc-950
-              dark:text-zinc-100 border-0 border-b-2 border-slate-400
-              focus:border-slate-950 focus:dark:border-slate-50 focus:ring-0"
-       @bind="CurrentValue"
-       autocomplete="off"/>
-<ValidationMessage class="w-full" For="@ValidationFor"/>
+<div class="@Class w-full">
+	<label for="@Id" class="text-zinc-700 dark:text-zinc-300">@Label</label>
+	<input id="@Id"
+		   class="block w-full px-0 bg-transparent text-zinc-950
+              dark:text-zinc-100 border-0 border-b-2
+              focus:border-slate-950 focus:dark:border-slate-50 focus:ring-0
+				@CssClass"
+		   @bind="CurrentValue"
+		   autocomplete="off" />
+	<ValidationMessage class="w-full" For="@ValidationFor" />
+</div>
 
 @code {
 
-    [Parameter]
-    public string Class { get; set; } = string.Empty;
+	[Parameter]
+	public string Class { get; set; } = string.Empty;
 
-    [Parameter, EditorRequired]
-    public Expression<Func<string>> ValidationFor { get; set; } = default!;
+	[Parameter, EditorRequired]
+	public Expression<Func<string>> ValidationFor { get; set; } = default!;
 
-    [Parameter]
-    public string? Id { get; set; }
+	[Parameter]
+	public string? Id { get; set; }
 
-    [Parameter, EditorRequired]
-    public string Label { get; set; } = default!;
+	[Parameter, EditorRequired]
+	public string Label { get; set; } = default!;
 
-    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
-    {
-        result = value ?? string.Empty;
-        validationErrorMessage = null;
-        return true;
-    }
+	protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+	{
+		result = value ?? string.Empty;
+		validationErrorMessage = null;
+		return true;
+	}
 
 }

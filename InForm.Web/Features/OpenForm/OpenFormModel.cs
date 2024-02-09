@@ -1,13 +1,16 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 
 namespace InForm.Web.Features.OpenForm;
 
 public class OpenFormModel
 {
-    [DisplayName("FormID")]
-    [Required(ErrorMessage = "{0} is required")]
-    [MinLength(4,
-        ErrorMessage = "{0} must be at least {1} characters")]
     public string FormId { get; set; } = string.Empty;
+}
+
+public class OpenFormValidator : AbstractValidator<OpenFormModel>
+{
+    public OpenFormValidator() { 
+        RuleFor(x => x.FormId)
+            .MinimumLength(4).WithMessage("FormID must be at least 4 characters");
+    }
 }

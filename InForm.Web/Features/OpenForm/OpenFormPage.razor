@@ -6,17 +6,16 @@
 
 <InFormLogo Size="LogoSize.Header"/>
 <EditForm FormName="open_form"
-          Model="SearchForm"
-          OnInvalidSubmit="InvalidForm"
+          EditContext="_editContext"
           OnValidSubmit="DoOpenForm"
           class="flex flex-col items-start py-4">
-    <DataAnnotationsValidator/>
+    <FluentValidationValidator />
 
     <TextEntry Id="form_id"
+               Class="w-full"
                Label="FormID"
                @bind-Value="SearchForm!.FormId"
-               ValidationFor="@(() => SearchForm!.FormId)">
-    </TextEntry>
+               ValidationFor="@(() => SearchForm!.FormId)" />
 
     <div class="w-full flex flex-row-reverse">
         <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
@@ -28,6 +27,7 @@
 </EditForm>
 
 @code {
+    private EditContext _editContext = default!;
 
     [SupplyParameterFromForm]
     public OpenFormModel? SearchForm { get; set; }
@@ -35,16 +35,12 @@
     protected override void OnInitialized()
     {
         SearchForm ??= new();
+        _editContext = new EditContext(SearchForm);
+        _editContext.SetFieldCssClassProvider(new TailwindCssClassProvider());
     }
 
     private async Task DoOpenForm()
     {
-        await Task.Delay(400);
-    }
-
-    private async Task InvalidForm()
-    {
-        Logger.LogWarning("AAAAA");
         await Task.Delay(400);
     }
 

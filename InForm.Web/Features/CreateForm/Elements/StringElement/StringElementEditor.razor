@@ -1,0 +1,35 @@
+@inherits InputBase<StringElementModel>
+
+<ElementShell Element="@CurrentValue" Title="Text element">
+	<div class="flex flex-col md:flex-row">
+		<BoolEntry Class="mt-6 mr-5 w-fit"
+				   Id="str_elem_required"
+				   Label="Fill required"
+				   @bind-Value="CurrentValue!.Required"
+				   ValidationFor="@(() => CurrentValue!.Required)" />
+		<BoolEntry Class="mt-6 mr-5 w-fit"
+				   Id="str_elem_multiline"
+				   Label="Multiline"
+				   @bind-Value="CurrentValue!.TextArea"
+				   ValidationFor="@(() => CurrentValue!.TextArea)" />
+	</div>
+	<div class="flex flex-col md:flex-row">
+		<TextEntry Class="mt-6 mr-5 w-full md:w-1/2"
+				   Id="str_elem_title"
+				   Label="Title"
+				   @bind-Value="CurrentValue!.Title"
+				   ValidationFor="@(() => CurrentValue!.Title)" />
+		<TextEntry Class="mt-6 w-full md:w-1/2"
+				   Id="str_elem_subtitle"
+				   Label="Subtitle"
+				   @bind-Value="CurrentValue!.Subtitle"
+				   ValidationFor="@(() => CurrentValue!.Subtitle)" />
+	</div>
+</ElementShell>
+
+@code {
+	protected override bool TryParseValueFromString(string? value, out StringElementModel result, out string? validationErrorMessage)
+	{
+		throw new NotImplementedException();
+	}
+}
