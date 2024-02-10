@@ -1,4 +1,5 @@
 using InForm.Server.Core.Features.Common;
+using InForm.Server.Features.FillForms.Db;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InForm.Features.Forms.Db;
@@ -37,23 +38,5 @@ public class StringFormElement : FormElementBase
         if (visitor is not ITypedVisitor<StringFormElement, TResult> typedVisitor) return default;
         return typedVisitor.Visit(this);
     }
-}
-
-/// <summary>
-///     An entity representing a fill data entity of a string form element.
-///     It contains but a simple string field.
-/// </summary>
-public class StringFillData : FillData
-{
-    /// <summary>
-    ///     The form element this fill data is for.
-    /// </summary>
-    public StringFormElement? ParentElement { get; set; }
-
-    /// <summary>
-    ///     The string value provided by the filler.
-    ///     Null if the value is not required by the parent element, and the filler did not fill this value.
-    /// </summary>
-    public string? Value { get; set; }
 }
 

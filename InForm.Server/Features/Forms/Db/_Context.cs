@@ -1,4 +1,5 @@
 using InForm.Features.Forms.Db;
+using InForm.Server.Features.FillForms.Db;
 using Microsoft.EntityFrameworkCore;
 
 namespace InForm.Server.Db;
@@ -15,8 +16,6 @@ public partial class InFormDbContext
 
         modelBuilder.Entity<FormElementBase>()
             .UseTphMappingStrategy();
-        modelBuilder.Entity<FillData>()
-            .UseTpcMappingStrategy();
 
         modelBuilder.Entity<StringFormElement>()
             .HasMany(x => x.FillData)
@@ -28,8 +27,6 @@ public partial class InFormDbContext
     public DbSet<Form> Forms { get; set; }
     
     public DbSet<FormElementBase> FormElementBases { get; set; }
-    public DbSet<FillData> FillData { get; set; }
 
     public DbSet<StringFormElement> StringFormElements { get; set; }
-    public DbSet<StringFillData> StringFillData { get; set; }
 }
