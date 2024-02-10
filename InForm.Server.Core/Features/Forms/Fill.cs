@@ -1,4 +1,5 @@
 ﻿using InForm.Server.Core.Features.Common;
+using System.Text.Json.Serialization;
 
 namespace InForm.Server.Core.Features.Forms;
 
@@ -17,6 +18,8 @@ public readonly record struct FillRequest(
 ///     Abstract base of typed fill elements.
 /// </summary>
 /// <param name="Id">The identifier of the form element this fill element is for.</param>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
+[JsonDerivedType(typeof(StringFillElement), "string")]
 public abstract record FillElement(
     long Id
 ) : IVisitable
