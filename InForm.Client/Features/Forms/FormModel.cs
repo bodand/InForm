@@ -4,6 +4,7 @@ namespace InForm.Client.Features.Forms;
 
 public class FormModel
 {
+    public Guid? Id { get; internal set; }
     public string Title { get; set; } = string.Empty;
 
     public string Subtitle { get; set; } = string.Empty;

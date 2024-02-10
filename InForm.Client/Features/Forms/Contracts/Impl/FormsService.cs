@@ -1,4 +1,5 @@
-﻿using InForm.Server.Core.Features.Forms;
+﻿using InForm.Server.Core.Features.Common;
+using InForm.Server.Core.Features.Forms;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -18,24 +19,26 @@ internal class FormsService(
     {
         var request = BuildRequest(model);
         var uri = "/api/forms";
-        var response = await PostAsync(httpClient, request, uri);
+        var response = await PostAsync(request, uri);
 
         await using var stream = await response.Content.ReadAsStreamAsync();
         var responsePayload = await JsonSerializer.DeserializeAsync<CreateFormResponse>(stream, _jsonOptions);
         return responsePayload.Id;
     }
 
-    private CreateFormRequest BuildRequest(FormModel model)
+    private static CreateFormRequest BuildRequest(FormModel model) => new()
     {
-        var request = new CreateFormRequest(model.Title, model.Subtitle, []);
-        request.Elements.AddRange(model.ElementModels.Select(CreateDtoFromModel));
-        return request;
-    }
+        Title = model.Title,
+        Subtitle = model.Subtitle,
+        Elements = [.. ProcessElements(model.ElementModels, new ToCreateDtoVisitor())]
+    };
 
-    private CreateFormElement CreateDtoFromModel(ElementModel elementModel)
-        => elementModel.ToDto();
+    private static IEnumerable<TResult> ProcessElements<TResult>(IEnumerable<ElementModel> elements, IVisitor<TResult> visitor)
+        where TResult : notnull
+        => from e in elements
+           select e.Accept(visitor);
 
-    private static async Task<HttpResponseMessage> PostAsync(HttpClient httpClient, CreateFormRequest request, string uri)
+    private async Task<HttpResponseMessage> PostAsync<TRequest>(TRequest request, string uri)
     {
         var response = await httpClient.PostAsJsonAsync(uri, request);
         return EnsureValidResponse(uri, response);
@@ -55,11 +58,31 @@ internal class FormsService(
         await using var stream = await response.Content.ReadAsStreamAsync();
         var responsePayload = await JsonSerializer.DeserializeAsync<GetFormReponse>(stream, _jsonOptions);
 
-        var form = new FormModel() { Title = responsePayload.Title, Subtitle = responsePayload.Subtitle ?? string.Empty };
+        var form = new FormModel()
+        {
+            Id = responsePayload.Id,
+            Title = responsePayload.Title,
+            Subtitle = responsePayload.Subtitle ?? string.Empty
+        };
         form.ElementModels.AddRange(from fe in responsePayload.FormElements
-                                    let elementVisitor = new FromDtoVisitor(form)
+                                    let elementVisitor = new FromGetDtoVisitor(form)
                                     orderby fe.Id
                                     select fe.Accept(elementVisitor));
         return form;
     }
+
+    public async Task AddFill(FormModel model)
+    {
+        if (model is { Id: null }) throw new InvalidFormToFillException("Model is missing the form id: is this form saved?");
+
+        var uri = $"/api/fills/{model.Id}";
+        var request = CreateFillRequest(model);
+        await PostAsync(request, uri);
+    }
+
+    private static FillRequest CreateFillRequest(FormModel model) => new()
+    {
+        FormId = model.Id!.Value,
+        Elements = [.. ProcessElements(model.ElementModels, new ToFillVisitor())]
+    };
 }

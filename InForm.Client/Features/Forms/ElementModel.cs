@@ -1,9 +1,10 @@
 using FluentValidation;
+using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Forms;
 
 namespace InForm.Client.Features.Forms;
 
-public abstract class ElementModel(FormModel parent)
+public abstract class ElementModel(FormModel parent) : IVisitable
 {
     public long? Id { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -13,8 +14,10 @@ public abstract class ElementModel(FormModel parent)
 
     public void Delete() => Parent.RemoveElement(this);
 
-    public abstract CreateFormElement ToDto();
     public abstract void MakeFillable();
+
+    public abstract void Accept(IVisitor visitor);
+    public abstract TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : notnull;
 }
 
 public class CreateElementValidator : AbstractValidator<ElementModel>

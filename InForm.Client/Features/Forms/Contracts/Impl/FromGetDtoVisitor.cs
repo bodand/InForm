@@ -1,9 +1,9 @@
 ﻿using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Forms;
 
-namespace InForm.Client.Features.Forms;
+namespace InForm.Client.Features.Forms.Contracts.Impl;
 
-internal class FromDtoVisitor(FormModel model)
+internal class FromGetDtoVisitor(FormModel model)
     : ITypedVisitor<GetStringFormElement, ElementModel>
 {
     public ElementModel Visit(GetStringFormElement visited)

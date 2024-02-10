@@ -1,4 +1,5 @@
 using FluentValidation;
+using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Forms;
 
 namespace InForm.Client.Features.Forms;
@@ -10,11 +11,20 @@ public class StringElementModel(FormModel parent) : ElementModel(parent)
 
     public StringElementFillData? FillData { get; set; }
 
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<StringElementModel> typed) return;
+        typed.Visit(this);
+    }
+
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
+    {
+        if (visitor is not ITypedVisitor<StringElementModel, TResult> typed) return default;
+        return typed.Visit(this);
+    }
+
     public override void MakeFillable()
         => FillData ??= new(this);
-
-    public override CreateStringElement ToDto()
-        => new(Title, Subtitle, MaxAnswerLength ?? 0, Required, TextArea);
 }
 
 public class StringElementFillData(StringElementModel model)
