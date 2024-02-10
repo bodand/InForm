@@ -5,6 +5,7 @@ namespace InForm.Client.Features.Forms;
 
 public abstract class ElementModel(FormModel parent)
 {
+    public long? Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Subtitle { get; set; }
     public bool Required { get; set; }
@@ -13,6 +14,7 @@ public abstract class ElementModel(FormModel parent)
     public void Delete() => Parent.RemoveElement(this);
 
     public abstract CreateFormElement ToDto();
+    public abstract void MakeFillable();
 }
 
 public class CreateElementValidator : AbstractValidator<ElementModel>

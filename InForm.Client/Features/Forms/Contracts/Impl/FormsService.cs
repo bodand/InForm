@@ -1,5 +1,4 @@
-﻿using InForm.Client.Features.Forms.Contracts;
-using InForm.Server.Core.Features.Forms;
+﻿using InForm.Server.Core.Features.Forms;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -57,9 +56,10 @@ internal class FormsService(
         var responsePayload = await JsonSerializer.DeserializeAsync<GetFormReponse>(stream, _jsonOptions);
 
         var form = new FormModel() { Title = responsePayload.Title, Subtitle = responsePayload.Subtitle ?? string.Empty };
-        var elementVisitor = new FromDtoVisitor(form);
-        form.ElementModels.AddRange(responsePayload.FormElements
-            .Select(x => x.Accept(elementVisitor)!));
+        form.ElementModels.AddRange(from fe in responsePayload.FormElements
+                                    let elementVisitor = new FromDtoVisitor(form)
+                                    orderby fe.Id
+                                    select fe.Accept(elementVisitor));
         return form;
     }
 }

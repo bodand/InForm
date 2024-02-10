@@ -4,12 +4,13 @@ using InForm.Server.Core.Features.Forms;
 namespace InForm.Client.Features.Forms;
 
 internal class FromDtoVisitor(FormModel model)
-    : ITypedVisitor<GetFormElement, ElementModel>
+    : ITypedVisitor<GetStringFormElement, ElementModel>
 {
-    public ElementModel Visit(GetFormElement visited)
+    public ElementModel Visit(GetStringFormElement visited)
         => new StringElementModel(model)
         {
-            MaxAnswerLength = visited.MaxLength,
+            Id = visited.Id,
+            MaxAnswerLength = visited.MaxLength == 0 ? null : visited.MaxLength,
             Required = visited.Required,
             Subtitle = visited.Subtitle,
             TextArea = visited.Multiline,

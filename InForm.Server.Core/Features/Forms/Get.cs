@@ -13,6 +13,7 @@ public readonly record struct GetFormReponse(
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(GetStringFormElement), "string")]
 public abstract record GetFormElement(
+    long Id,
     string Title,
     string? Subtitle,
     bool Required
@@ -23,12 +24,13 @@ public abstract record GetFormElement(
 }
 
 public record GetStringFormElement(
+    long Id,
     string Title,
     string? Subtitle,
     int MaxLength,
     bool Required,
     bool Multiline
-) : GetFormElement(Title, Subtitle, Required)
+) : GetFormElement(Id, Title, Subtitle, Required)
 {
     public override void Accept(IVisitor visitor)
     {
