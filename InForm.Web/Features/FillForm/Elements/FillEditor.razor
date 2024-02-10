@@ -1,0 +1,20 @@
+﻿@inherits InputBase<ElementModel>
+
+<div class="my-4">
+    <FillShell Element="CurrentValue">
+        @switch (CurrentValue)
+        {
+            case StringElementModel stringElementModel:
+                <FillStringElement @bind-Value=stringElementModel.FillData />
+                break;
+        }
+    </FillShell>
+</div>
+
+@code {
+    protected override void OnParametersSet() => CurrentValue?.MakeFillable();
+
+    protected override bool TryParseValueFromString(string value,
+                                                    out ElementModel result,
+                                                    out string validationErrorMessage) => throw new NotImplementedException();
+}

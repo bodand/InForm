@@ -1,5 +1,6 @@
 @page "/Create"
 @inject IFormsService FormsService
+@inject NavigationManager NavigationManager
 @implements IDisposable
 
 <EditForm class="h-full flex flex-col md:flex-row"
@@ -71,7 +72,15 @@
 
     private async Task SendCreateForm()
     {
-        await FormsService.CreateForm(CreateForm);
+        try
+        {
+            var id = await FormsService.CreateForm(CreateForm);
+            NavigationManager.NavigateTo($"/form/{id}");
+        } 
+        catch (Exception)
+        {
+            // todo do something useful
+        }
     }
 
     protected override void OnInitialized()

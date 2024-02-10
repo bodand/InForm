@@ -1,0 +1,64 @@
+﻿@page "/form/{Id:guid}"
+@inject IFormsService FormsService
+
+<div class="mx-2">
+    @if (Form is null)
+    {
+        <div>
+            Loading form...
+        </div>
+    }
+    else
+    {
+        <h2 class="fixed text-5xl break-words"
+            title="@Form.Title">
+            @Form.Title
+        </h2>
+        <h3 class="fixed text-wrap mt-11 text-2xl text-zinc-700 dark:text-zinc-300 break-words"
+            title="@Form.Subtitle">
+            @Form.Subtitle
+        </h3>
+
+        <EditForm EditContext="_editContext"
+                  OnValidSubmit="SendForm">
+            <FluentValidationValidator />
+            <div class="mt-32 flex flex-col w-fit mx-auto">
+                @for (var i = 0; i < Form.ElementModels.Count; ++i)
+                {
+                    <FillEditor @bind-Value="Form.ElementModels[i]" />
+                }
+
+                <div class="w-full flex flex-row-reverse">
+                    <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                       hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                       hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public FormModel? Form { get; set; }
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private EditContext? _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Form is not null) return;
+        Form = await FormsService.GetForm(Id);
+        _editContext = new(Form);
+        StateHasChanged();
+    }
+
+    private async Task SendForm()
+    {
+        await Task.Delay(500);
+    }
+}

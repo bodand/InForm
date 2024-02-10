@@ -1,0 +1,12 @@
+﻿@inherits InputBase<StringElementFillData>
+
+<TextEntry Id="str_response"
+           Label="Response"
+           @bind-Value="CurrentValue!.Value"
+           ValidationFor="@(() => CurrentValue!.Value)" />
+
+@code {
+    protected override bool TryParseValueFromString(string value,
+            out StringElementFillData result,
+            out string validationErrorMessage) => throw new NotImplementedException();
+}

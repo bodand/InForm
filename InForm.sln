@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InForm.Web", "InForm.Web\In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InForm.Server", "InForm.Server\InForm.Server.csproj", "{6A06FDEC-8591-4D13-9A17-EF3F248ECE4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InForm.Server.Core", "InForm.Server.Core\InForm.Server.Core.csproj", "{1DACE9DE-D6DB-4D5E-B0B8-6CE2575273FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InForm.Server.Core", "InForm.Server.Core\InForm.Server.Core.csproj", "{1DACE9DE-D6DB-4D5E-B0B8-6CE2575273FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelConfigurationGenerator", "ModelConfigurationGenerator\ModelConfigurationGenerator.csproj", "{08BDCB09-0651-4FDD-B951-07A978FFB9E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InForm.Client", "InForm.Client\InForm.Client.csproj", "{2587A838-5BAA-4E57-976B-518A0882B732}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InForm.Client", "InForm.Client\InForm.Client.csproj", "{2587A838-5BAA-4E57-976B-518A0882B732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
