@@ -84,7 +84,7 @@ public class FormsController(InFormDbContext dbContext) : ControllerBase
             Subtitle = form.Subtitle,
             FormElementBases = []
         };
-        var elementVisitor = new CreateFromDtoVisitor(res);
+        var elementVisitor = new FromCreateDtoVisitor(res);
         res.FormElementBases.AddRange(from elem in form.Elements
                                       select elem.Accept(elementVisitor));
 
