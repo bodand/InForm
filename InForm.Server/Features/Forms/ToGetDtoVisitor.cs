@@ -4,11 +4,12 @@ using InForm.Server.Core.Features.Forms;
 
 namespace InForm.Server.Features.Forms;
 
-public class ToGetDtoVisitor :
+internal class ToGetDtoVisitor :
     ITypedVisitor<StringFormElement, GetFormElement>
 {
     public GetFormElement Visit(StringFormElement visited)
         => new GetStringFormElement(
+                visited.Id,
                 visited.Title,
                 visited.Subtitle,
                 visited.MaxLength ?? 0,
