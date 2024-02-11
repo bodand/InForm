@@ -23,9 +23,17 @@ public partial class InFormDbContext
             .OnDelete(DeleteBehavior.Cascade);
     }
 
+    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
+    {
+        var strings = await StringFormElements.Where(x => x.ParentForm == form).ToListAsync();
+        return [
+            .. strings
+        ];
+    }
+
 #nullable disable
     public DbSet<Form> Forms { get; set; }
-    
+
     public DbSet<FormElementBase> FormElementBases { get; set; }
 
     public DbSet<StringFormElement> StringFormElements { get; set; }

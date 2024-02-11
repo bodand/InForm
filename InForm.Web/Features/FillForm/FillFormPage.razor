@@ -1,4 +1,5 @@
 ﻿@page "/form/{Id:guid}"
+@inject ILogger<FillFormPage> Logger
 @inject IFormsService FormsService
 
 <div class="mx-2">
@@ -20,6 +21,7 @@
         </h3>
 
         <EditForm EditContext="_editContext"
+                  OnInvalidSubmit="InvalidSubmit"
                   OnValidSubmit="SendForm">
             <FluentValidationValidator />
             <div class="mt-32 flex flex-col w-fit mx-auto">
@@ -57,8 +59,21 @@
         StateHasChanged();
     }
 
+    private async Task InvalidSubmit()
+    {
+
+        foreach (var msg in _editContext.GetValidationMessages())
+        {
+            Logger.LogInformation($"XXXXXX: {msg}");
+        }
+    }
+
     private async Task SendForm()
     {
-        await Task.Delay(500);
+        Logger.LogInformation("AAAAA");
+        if (Form is null) return;
+        Logger.LogInformation("AAAAA");
+        await FormsService.AddFill(Form);
+        Logger.LogInformation("AAAAA");
     }
 }

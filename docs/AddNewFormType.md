@@ -78,6 +78,7 @@ Implement the now missing methods.
 Add an element form entity type as a descendant of `FormElementBase`, in the Forms\\Db directory.
 This should store all the metadata of a form element in the Db for later retrieval.
 Add this type to the DbContext partial class' part in the `_Context.cs` file.
+Also modify the `LoadAllElementsForForm()` method to also load your new element types.
 
 There should be a `FillData` property as a list of the respective fill data entities created in the following section.
 

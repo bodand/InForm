@@ -30,6 +30,7 @@ public class StringElementModel(FormModel parent) : ElementModel(parent)
 public class StringElementFillData(StringElementModel model)
 {
     public string? Value { get; set; }
+    public StringElementModel Model { get; } = model;
 }
 
 public class StringElementValidator : AbstractValidator<StringElementModel>
@@ -39,20 +40,33 @@ public class StringElementValidator : AbstractValidator<StringElementModel>
         RuleFor(x => x.MaxAnswerLength)
             .GreaterThan(0).WithMessage("Text length requirement must be positive");
         RuleFor(x => x.FillData)
-            .SetValidator((x, data) => new StringValueValidator(x));
+            .SetValidator(new StringValueValidator());
     }
 }
 
 public class StringValueValidator : AbstractValidator<StringElementFillData?>
 {
-    public StringValueValidator(StringElementModel elementModel)
+    public StringValueValidator()
     {
-        var rules = RuleFor(x => x!.Value);
-        if (elementModel.Required)
-            rules.NotEmpty()
-                 .WithMessage("This field is required");
-        if (elementModel.MaxAnswerLength.HasValue)
-            rules.MaximumLength(elementModel.MaxAnswerLength.Value)
-                 .WithMessage("The response must be less than {MaxLength} characters");
+        When(x => x?.Model.Required ?? false, () =>
+        {
+            RuleFor(x => x.Value).NotEmpty().WithMessage("This field is required");
+        });
+
+        When(x => x?.Model.MaxAnswerLength.HasValue ?? false, () =>
+        {
+            RuleFor(x => x!.Value)
+                .Must((data, value) =>
+                {
+                    if (data is null || value is null) return true;
+                    var max = data.Model.MaxAnswerLength ?? 0;
+                    return value.Length <= max;
+                })
+                .WithMessage(x =>
+                {
+                    var max = x?.Model.MaxAnswerLength ?? 0;
+                    return $"The response must be less than {max} characters";
+                });
+        });
     }
 }
