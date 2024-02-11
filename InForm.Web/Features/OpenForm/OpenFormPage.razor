@@ -1,5 +1,7 @@
 ﻿@page "/"
 @inject ILogger<OpenFormPage> Logger
+@inject IFormsService FormsService
+@inject NavigationManager NavigationManager
 @layout BlankLayout
 
 <PageTitle>InForm - Open form</PageTitle>
@@ -16,6 +18,7 @@
                Label="FormID"
                @bind-Value="SearchForm!.FormId"
                ValidationFor="@(() => SearchForm!.FormId)" />
+    <div>@_errorText</div>
 
     <div class="w-full flex flex-row-reverse">
         <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
@@ -32,6 +35,8 @@
     [SupplyParameterFromForm]
     public OpenFormModel? SearchForm { get; set; }
 
+    private string? _errorText = string.Empty;
+
     protected override void OnInitialized()
     {
         SearchForm ??= new();
@@ -41,7 +46,21 @@
 
     private async Task DoOpenForm()
     {
-        await Task.Delay(400);
+        try
+        {
+            if (SearchForm is null) return;
+            var formId = Guid.Parse(SearchForm.FormId);
+            var formMetadata = await FormsService.GetFormName(formId);
+            NavigationManager.NavigateTo($"/form/{formId}");
+        }
+        catch (ApplicationException)
+        {
+            _errorText = "There is no form with the given ID";
+        }
+        catch (FormatException)
+        {
+            _errorText = "FormID is not in a valid format";
+        }
     }
 
 }
