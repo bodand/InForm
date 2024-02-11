@@ -6,7 +6,7 @@ using InForm.Server.Features.FillForms.Db;
 
 namespace InForm.Server.Features.FillForms;
 
-public class FillDataDtoInjectorVisitor(InFormDbContext dbContext, FormElementBase formElement) :
+public class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement) :
     ITypedVisitor<StringFillElement>
 {
     public void Visit(StringFillElement visited)
@@ -18,6 +18,7 @@ public class FillDataDtoInjectorVisitor(InFormDbContext dbContext, FormElementBa
         {
             ParentElement = stringForm,
             Value = visited.Value,
+            Fill = fill,
         });
     }
 }

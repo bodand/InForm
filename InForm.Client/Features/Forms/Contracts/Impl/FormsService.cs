@@ -85,4 +85,12 @@ internal class FormsService(
         FormId = model.Id!.Value,
         Elements = [.. ProcessElements(model.ElementModels, new ToFillVisitor())]
     };
+
+    public async Task<GetFormNameResponse> GetFormName(Guid id)
+    {
+        var uri = $"/api/forms/{id}/name";
+        var response = EnsureValidResponse(uri, await httpClient.GetAsync(uri));
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonSerializer.DeserializeAsync<GetFormNameResponse>(stream, _jsonOptions);
+    }
 }

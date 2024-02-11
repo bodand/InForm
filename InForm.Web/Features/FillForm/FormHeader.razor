@@ -1,0 +1,18 @@
+﻿<h2 class="fixed text-5xl break-words"
+    title="@RenderTitle">
+    @RenderTitle
+</h2>
+<h3 class="fixed text-wrap mt-11 text-2xl text-zinc-700 dark:text-zinc-300 break-words"
+    title="@Subtitle">
+    @Subtitle
+</h3>
+
+@code {
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? Subtitle { get; set; }
+
+    private string RenderTitle => Title ?? "...";
+}

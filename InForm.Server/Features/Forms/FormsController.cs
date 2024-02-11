@@ -41,6 +41,24 @@ public class FormsController(InFormDbContext dbContext) : ControllerBase
     }
 
     /// <summary>
+    ///     Return the name of a given form.
+    ///     When only the name is needed, prefer this endpoint over the full form,
+    ///     because this is considerable more lightweight.
+    /// </summary>
+    /// <param name="id">The id of the form.</param>
+    [HttpGet("{id:guid}/name")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<GetFormNameResponse>> GetFormName(Guid id)
+    {
+        var form = await dbContext.Forms.AsNoTracking()
+                                        .SingleOrDefaultAsync(x => x.IdGuid == id);
+        if (form is null) return NotFound();
+
+        return new GetFormNameResponse(form.IdGuid, form.Title, form.Subtitle);
+    }
+
+    /// <summary>
     ///     Creates a thereon fillable form entity.
     ///     This stores the fields that need to be filled by the end-users when filling this form.
     /// </summary>

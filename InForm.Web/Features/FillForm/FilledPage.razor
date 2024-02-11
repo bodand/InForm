@@ -1,0 +1,25 @@
+﻿@page "/form/{Id:guid}/filled"
+@inject IFormsService FormsService
+
+<FormHeader Title="@Title" Subtitle="@Subtitle" />
+
+<div class="mt-32 flex flex-col w-fit mx-auto">
+    Thank you for filling out this form.
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private string? Title { get; set; }
+    private string? Subtitle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Title is not null) return;
+        var formName = await FormsService.GetFormName(Id);
+        Title = formName.Title;
+        Subtitle = formName.Subtitle;
+        StateHasChanged();
+    }
+}

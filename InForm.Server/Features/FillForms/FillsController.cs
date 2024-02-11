@@ -1,5 +1,6 @@
 ﻿using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
+using InForm.Server.Features.FillForms.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,11 +39,12 @@ public class FillsController(InFormDbContext dbContext) : ControllerBase
 
             var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
             if (form is null) return NotFound();
-            
+
+            var fillObj = new Fill();
             var fills = request.Elements.OrderBy(x => x.Id);
 
             var formElements = await dbContext.LoadAllElementsForForm(form);
-            var elementVisitors = formElements.OrderBy(x => x.Id).Select(x => new FillDataDtoInjectorVisitor(dbContext, x));
+            var elementVisitors = formElements.OrderBy(x => x.Id).Select(x => new FillDataDtoInjectorVisitor(fillObj, x));
 
             elementVisitors.Zip(fills).AsParallel().ForAll(AddWithVisitor);
 

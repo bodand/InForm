@@ -3,6 +3,7 @@ using System;
 using InForm.Server.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InForm.Server.Migrations
 {
     [DbContext(typeof(InFormDbContext))]
-    partial class InFormDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240211134517_FormElement_ParentId")]
+    partial class FormElement_ParentId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,19 +93,6 @@ namespace InForm.Server.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("InForm.Server.Features.FillForms.Db.Fill", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Fill", "InForm");
-                });
-
             modelBuilder.Entity("InForm.Server.Features.FillForms.Db.FillData", b =>
                 {
                     b.Property<long>("Id")
@@ -112,12 +102,7 @@ namespace InForm.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<long>("Id"));
 
-                    b.Property<long>("FillId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("FillId");
 
                     b.ToTable((string)null);
 
@@ -161,17 +146,6 @@ namespace InForm.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("ParentForm");
-                });
-
-            modelBuilder.Entity("InForm.Server.Features.FillForms.Db.FillData", b =>
-                {
-                    b.HasOne("InForm.Server.Features.FillForms.Db.Fill", "Fill")
-                        .WithMany()
-                        .HasForeignKey("FillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fill");
                 });
 
             modelBuilder.Entity("InForm.Server.Features.FillForms.Db.StringFillData", b =>

@@ -11,4 +11,8 @@ public abstract class FillData
     ///     The database identifier.
     /// </summary>
     public long Id { get; set; }
+
+    public long FillId { get; set; }
+
+    public Fill? Fill { get; set; }
 }

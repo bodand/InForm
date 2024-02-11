@@ -1,5 +1,6 @@
 ﻿@page "/form/{Id:guid}"
 @inject ILogger<FillFormPage> Logger
+@inject NavigationManager NavigationManager
 @inject IFormsService FormsService
 
 <div class="mx-2">
@@ -70,10 +71,8 @@
 
     private async Task SendForm()
     {
-        Logger.LogInformation("AAAAA");
         if (Form is null) return;
-        Logger.LogInformation("AAAAA");
         await FormsService.AddFill(Form);
-        Logger.LogInformation("AAAAA");
+        NavigationManager.NavigateTo($"/form/{Id}/filled");
     }
 }

@@ -36,6 +36,8 @@ public abstract class FormElementBase : IVisitable
     /// </summary>
     public bool Required { get; set; }
 
+    public long ParentFormId { get; set; }
+
     /// <summary>
     ///     Navigation property to the owning Form entity.
     /// </summary>
