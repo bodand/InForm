@@ -29,6 +29,14 @@ public partial class InFormDbContext
         return [
             .. strings
         ];
+    } 
+
+    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
+    {
+        var strings = await StringFormElements.Include(x => x.FillData).Where(x => x.ParentFormId == form.Id).ToListAsync();
+        return [
+            .. strings
+        ];
     }
 
 #nullable disable

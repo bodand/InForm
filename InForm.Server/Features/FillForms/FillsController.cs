@@ -1,5 +1,7 @@
-﻿using InForm.Server.Core.Features.Forms;
+﻿using InForm.Server.Core.Features.Fill;
+using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
+using InForm.Server.Features.Common;
 using InForm.Server.Features.FillForms.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,10 @@ namespace InForm.Server.Features.FillForms;
 [Route("/api/fills/{formId:guid}")]
 [Consumes("application/json")]
 [Produces("application/json")]
-public class FillsController(InFormDbContext dbContext) : ControllerBase
+public class FillsController(
+    InFormDbContext dbContext,
+    IPasswordHasher passwordHasher
+) : ControllerBase
 {
     /// <summary>
     ///     Adds a set of fill data to the given form.
@@ -65,4 +70,46 @@ public class FillsController(InFormDbContext dbContext) : ControllerBase
         var (visitor, fill) = pair;
         fill.Accept(visitor);
     }
+
+    /// <summary> 
+    ///     Retrieves the list of fill values for a given form.
+    /// </summary>
+    /// <param name="formId">The id of the form to add a fill to.</param>
+    /// <response code="200">The filled in responses of the form.</response>
+    /// <response code="401">The form's responses are not public and an invalid password was provided.</response>
+    /// <response code="404">The given form does not exist.</response>
+    [HttpPost(":retrieve")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<RetrieveFillsResponse>> GetFillData(Guid formId, [FromBody] RetrieveFillsRequest request)
+    {
+        await using var tr = await dbContext.Database.BeginTransactionAsync();
+
+        var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
+        if (form is null) return NotFound();
+
+        if (form.PasswordHash is { } hash)
+        {
+            var passResult = passwordHasher.VerifyAndUpdate(request.Password ?? string.Empty, hash);
+            if (!passResult.Verified) return Unauthorized();
+
+            if (passResult is { UpdatedHash: { } newHash })
+            {
+                form.PasswordHash = newHash;
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        var formElements = await dbContext.LoadAllElementsForFormWithData(form);
+        var visitor = new ToResponseDtoVisitor();
+        var response = new RetrieveFillsResponse(
+            form.Title,
+            form.Subtitle,
+            [.. formElements.Select(x => x.Accept(visitor))]);
+
+        await tr.CommitAsync();
+        return response;
+    }
+
 }
