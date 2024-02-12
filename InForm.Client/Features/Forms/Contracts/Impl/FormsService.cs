@@ -30,6 +30,7 @@ internal class FormsService(
     {
         Title = model.Title,
         Subtitle = model.Subtitle,
+        Password = model.Password,
         Elements = [.. ProcessElements(model.ElementModels, new ToCreateDtoVisitor())]
     };
 
