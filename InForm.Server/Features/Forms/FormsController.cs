@@ -1,6 +1,7 @@
-﻿using InForm.Features.Forms.Db;
-using InForm.Server.Core.Features.Forms;
+﻿using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
+using InForm.Server.Features.Common;
+using InForm.Server.Features.Forms.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,10 @@ namespace InForm.Server.Features.Forms;
 [ApiController]
 [Consumes("application/json")]
 [Produces("application/json")]
-public class FormsController(InFormDbContext dbContext) : ControllerBase
+public class FormsController(
+    InFormDbContext dbContext,
+    IPasswordHasher passwordHasher
+) : ControllerBase
 {
     /// <summary>
     ///     Return a form by the given form, identified by its id.
@@ -94,12 +98,13 @@ public class FormsController(InFormDbContext dbContext) : ControllerBase
         }
     }
 
-    private static Form FromDto(CreateFormRequest form)
+    private Form FromDto(CreateFormRequest form)
     {
         var res = new Form()
         {
             Title = form.Title,
             Subtitle = form.Subtitle,
+            PasswordHash = form.Password is null ? null : passwordHasher.Hash(form.Password),
             FormElementBases = []
         };
         var elementVisitor = new FromCreateDtoVisitor(res);

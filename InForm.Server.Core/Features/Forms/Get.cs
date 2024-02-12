@@ -19,7 +19,10 @@ public abstract record GetFormElement(
     bool Required
 ) : IVisitable
 {
+    /// <inheritdoc />
     public abstract void Accept(IVisitor visitor);
+
+    /// <inheritdoc />
     public abstract TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : notnull;
 }
 
@@ -32,12 +35,14 @@ public record GetStringFormElement(
     bool Multiline
 ) : GetFormElement(Id, Title, Subtitle, Required)
 {
+    /// <inheritdoc />
     public override void Accept(IVisitor visitor)
     {
         if (visitor is not ITypedVisitor<GetStringFormElement> typedVisitor) return;
         typedVisitor.Visit(this);
     }
 
+    /// <inheritdoc />
     public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
     {
         if (visitor is not ITypedVisitor<GetStringFormElement, TResult> typedVisitor) return default;

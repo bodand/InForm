@@ -8,6 +8,8 @@ public class FormModel
     public string Title { get; set; } = string.Empty;
 
     public string Subtitle { get; set; } = string.Empty;
+    
+    public string? Password { get; set; }
 
     public event Action? ElementDeleted;
     public List<ElementModel> ElementModels { get; set; } = [];

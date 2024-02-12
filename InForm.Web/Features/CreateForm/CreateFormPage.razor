@@ -19,6 +19,12 @@
                    Label="Form Subtitle"
                    @bind-Value="CreateForm!.Subtitle"
                    ValidationFor="@(() => CreateForm.Subtitle)"/>
+        <TextEntry Class="mt-6"
+                   Id="form_pass"
+                   Label="Results password"
+                   @bind-Value="CreateForm!.Password"
+                   ValidationFor="@(() => CreateForm.Password)"
+                   Type="password"/>
 
         <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
                        hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
@@ -42,7 +48,7 @@
                         Add element
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
                     </svg>
                     <div class="absolute top-10 left-0 @DropDownVisibility p-2 w-full
                                 text-zinc-100 bg-slate-950 dark:text-zinc-950 dark:bg-slate-100">
@@ -64,7 +70,7 @@
 
 @code {
     private bool _dropDownVisible = false;
-    private string DropDownVisibility => _dropDownVisible ? null : "hidden";
+    private string? DropDownVisibility => _dropDownVisible ? null : "hidden";
 
     private EditContext _editContext = default!;
 
@@ -76,7 +82,7 @@
         {
             var id = await FormsService.CreateForm(CreateForm);
             NavigationManager.NavigateTo($"/form/{id}");
-        } 
+        }
         catch (Exception)
         {
             // todo do something useful
@@ -91,7 +97,7 @@
     }
 
     private void AddNewElement<TElement>()
-    where TElement : ElementModel
+        where TElement : ElementModel
     {
         var elem = (TElement)Activator.CreateInstance(typeof(TElement), CreateForm)!;
         CreateForm.ElementModels.Add(elem);

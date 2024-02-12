@@ -1,8 +1,7 @@
 using InForm.Server.Core.Features.Common;
 using InForm.Server.Features.FillForms.Db;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InForm.Features.Forms.Db;
+namespace InForm.Server.Features.Forms.Db;
 
 /// <summary>
 ///     A concrete entity type representing a single text field of the form.

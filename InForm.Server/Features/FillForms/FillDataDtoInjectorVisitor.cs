@@ -1,12 +1,12 @@
-﻿using InForm.Features.Forms.Db;
-using InForm.Server.Core.Features.Common;
+﻿using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
 using InForm.Server.Features.FillForms.Db;
+using InForm.Server.Features.Forms.Db;
 
 namespace InForm.Server.Features.FillForms;
 
-public class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement) :
+internal class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement) :
     ITypedVisitor<StringFillElement>
 {
     public void Visit(StringFillElement visited)
@@ -14,7 +14,7 @@ public class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement) 
         if (formElement is not StringFormElement stringForm)
             throw new InvalidOperationException();
 
-        stringForm.FillData.Add(new()
+        stringForm.FillData.Add(new StringFillData
         {
             ParentElement = stringForm,
             Value = visited.Value,

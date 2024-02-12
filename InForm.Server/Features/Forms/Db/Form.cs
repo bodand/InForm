@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InForm.Features.Forms.Db;
+namespace InForm.Server.Features.Forms.Db;
 
 /// <summary>
 ///     A form entity stored in the database.
@@ -35,7 +35,13 @@ public class Form
     /// </summary>
     [StringLength(128)]
     public string? Subtitle { get; set; }
-
+    
+    /// <summary>
+    ///     The hash of the password, if the results of the form are not public.
+    /// </summary>
+    [StringLength(120)]
+    public string? PasswordHash { get; set; }
+    
     /// <summary>
     ///     The list of form elements the form contains.
     /// </summary>

@@ -3,7 +3,7 @@
 
 <div class="@Class w-full">
 	<label for="@Id" class="text-zinc-700 dark:text-zinc-300">@Label</label>
-	<input id="@Id"
+	<input id="@Id" type="@Type"
 		   class="block w-full px-0 bg-transparent text-zinc-950
               dark:text-zinc-100 border-0 border-b-2
               focus:border-slate-950 focus:dark:border-slate-50 focus:ring-0
@@ -14,7 +14,9 @@
 </div>
 
 @code {
-
+	[Parameter]
+	public string Type { get; set; } = "text";
+	
 	[Parameter]
 	public string Class { get; set; } = string.Empty;
 

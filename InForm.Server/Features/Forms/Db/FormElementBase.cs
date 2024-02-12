@@ -1,7 +1,7 @@
-﻿using InForm.Server.Core.Features.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using InForm.Server.Core.Features.Common;
 
-namespace InForm.Features.Forms.Db;
+namespace InForm.Server.Features.Forms.Db;
 
 /// <summary>
 ///     The base class of all form elements.

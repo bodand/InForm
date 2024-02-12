@@ -9,6 +9,8 @@ public readonly record struct CreateFormRequest(
     string Title,
     [StringLength(128)]
     string? Subtitle,
+    [MinLength(3)]
+    string? Password,
     [MinLength(1)]
     List<CreateFormElement> Elements
 );

@@ -1,11 +1,14 @@
 using InForm.Server.Db;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using InForm.Server.Features.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-const string corsPolicy = "";
+builder.Services.Configure<SodiumHasherOptions>(config.GetSection("Passwords"));
+
+const string corsPolicy = "_inform_cors";
 
 builder.Services.AddCors(ops =>
 {
@@ -27,6 +30,7 @@ builder.Services.AddSwaggerGen(ops =>
 });
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<IPasswordHasher, SodiumPasswordHasher>();
 builder.Services.AddDbContext<InFormDbContext>(ops =>
 {
 	ops.UseNpgsql(config.GetConnectionString("InFormDb"));
