@@ -16,6 +16,7 @@ namespace InForm.Client
 													     Action<IServiceProvider, HttpClient> config)
 		{
 			services.AddHttpClient<IFormsService, FormsService>(config);
+			services.AddHttpClient<IFillService, FillService>(config);
 			return services;
 		}
 	}

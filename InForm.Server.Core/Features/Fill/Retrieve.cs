@@ -31,7 +31,9 @@ public readonly record struct RetrieveFillsResponse(
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(StringElementResponse), "string")]
 public abstract record ElementResponse(
-    long Id
+    long Id,
+    string Title,
+    string? Subtitle
 ) : IVisitable
 {
     /// <inheritdoc/>
@@ -48,8 +50,10 @@ public abstract record ElementResponse(
 /// <param name="Responses">The list of answers and their cardinality.</param>
 public record StringElementResponse(
     long Id,
+    string Title,
+    string? Subtitle,
     Dictionary<string, int> Responses
-) : ElementResponse(Id)
+) : ElementResponse(Id, Title, Subtitle)
 {
     /// <inheritdoc/>
     public override void Accept(IVisitor visitor)

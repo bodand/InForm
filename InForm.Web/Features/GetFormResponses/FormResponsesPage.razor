@@ -1,0 +1,46 @@
+﻿@using InForm.Server.Core.Features.Fill
+
+@page "/form/{Id:guid}/responses"
+@inject IFillService FillService
+
+<div class="mx-2">
+    @if (!Response.HasValue)
+    {
+        <div>
+            Loading responses...
+        </div>
+    }
+    else
+    {
+        <h2 class="fixed text-5xl break-words"
+            title="@Response.Value.Title">
+            @Response.Value.Title
+        </h2>
+        <h3 class="fixed text-wrap mt-11 text-2xl text-zinc-700 dark:text-zinc-300 break-words"
+            title="@Response.Value.Subtitle">
+            @Response.Value.Subtitle
+        </h3>
+
+        <div class="mt-32 flex flex-col w-fit mx-auto">
+            @for (var i = 0; i < Response.Value.Responses.Count; i++)
+            {
+                <ResponseBase FillsResponse="@Response.Value"
+                              ElementResponse="@Response.Value.Responses[i]" />
+            }
+        </div>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [Parameter]
+    public RetrieveFillsResponse? Response { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Response = await FillService.GetResponses(Id, null);
+    }
+}

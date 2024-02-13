@@ -72,21 +72,7 @@ internal class FormsService(
         return form;
     }
 
-    public async Task AddFill(FormModel model)
-    {
-        if (model is { Id: null }) throw new InvalidFormToFillException("Model is missing the form id: is this form saved?");
-
-        var uri = $"/api/fills/{model.Id}";
-        var request = CreateFillRequest(model);
-        await PostAsync(request, uri);
-    }
-
-    private static FillRequest CreateFillRequest(FormModel model) => new()
-    {
-        FormId = model.Id!.Value,
-        Elements = [.. ProcessElements(model.ElementModels, new ToFillVisitor())]
-    };
-
+   
     public async Task<GetFormNameResponse> GetFormName(Guid id)
     {
         var uri = $"/api/forms/{id}/name";

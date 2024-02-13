@@ -7,5 +7,4 @@ public interface IFormsService
 	Task<FormModel> GetForm(Guid id);
 	Task<GetFormNameResponse> GetFormName(Guid id);
 	Task<Guid> CreateForm(FormModel model);
-	Task AddFill(FormModel model);
 }

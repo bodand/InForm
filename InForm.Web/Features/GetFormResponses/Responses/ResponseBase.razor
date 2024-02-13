@@ -1,0 +1,22 @@
+﻿@using InForm.Server.Core.Features.Fill
+<div class="my-4">
+    <ResponseShell Title="@FillsResponse.Title"
+                   Subtitle="@FillsResponse.Subtitle">
+        @switch (ElementResponse)
+        {
+            case StringElementResponse strings:
+                <StringResponse Response="@strings"></StringResponse>
+                break;
+        }
+    </ResponseShell>
+</div>
+
+@code {
+    [Parameter]
+    public RetrieveFillsResponse FillsResponse { get; set; } = default!;
+
+    [Parameter]
+    public ElementResponse ElementResponse { get; set; } = default!;
+
+
+}

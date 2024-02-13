@@ -2,6 +2,7 @@
 @inject ILogger<FillFormPage> Logger
 @inject NavigationManager NavigationManager
 @inject IFormsService FormsService
+@inject IFillService FillService
 
 <div class="mx-2">
     @if (Form is null)
@@ -72,7 +73,7 @@
     private async Task SendForm()
     {
         if (Form is null) return;
-        await FormsService.AddFill(Form);
+        await FillService.AddFill(Form);
         NavigationManager.NavigateTo($"/form/{Id}/filled");
     }
 }

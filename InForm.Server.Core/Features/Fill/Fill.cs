@@ -1,7 +1,7 @@
 ﻿using InForm.Server.Core.Features.Common;
 using System.Text.Json.Serialization;
 
-namespace InForm.Server.Core.Features.Forms;
+namespace InForm.Server.Core.Features.Fill;
 
 /// <summary>
 ///     A request DTO for creating a fill for a form.
