@@ -6,9 +6,48 @@
 <div class="mx-2">
     @if (!Response.HasValue)
     {
-        <div>
-            Loading responses...
-        </div>
+        <EditForm EditContext="_editContext"
+                  OnSubmit="@(TryLoadElements)">
+            <div class="mt-32 flex flex-col w-fit mx-auto">
+                @switch (_state)
+                {
+                    case PageState.Loading:
+                        <div class="text-lg m-4 mb-8">Loading</div>
+                        break;
+
+                    case PageState.MissingPassword:
+                        <div class="text-lg m-4 mb-8">This form is not public.</div>
+
+                        <TextEntry Id="resp_pass"
+                                   Label="Password"
+                                   Type="password"
+                                   @bind-Value=_password />
+
+                        <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                                       hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                                       hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+                            Open
+                        </button>
+
+                        break;
+
+                    case PageState.BadPassword:
+                        <div class="text-lg m-4 mb-8">Incorrect password.</div>
+
+                        <TextEntry Id="resp_pass"
+                                   Label="Password"
+                                   Type="password"
+                                   @bind-Value=_password />
+                        <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                                       hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                                       hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+                            Open
+                        </button>
+
+                        break;
+                }
+            </div>
+        </EditForm>
     }
     else
     {
@@ -33,14 +72,46 @@
 
 
 @code {
+    enum PageState
+    {
+        Loading,
+        MissingPassword,
+        BadPassword
+    }
+
+    private PageState _state = PageState.Loading;
+
+    private EditContext _editContext = default!;
+
     [Parameter]
     public Guid Id { get; set; }
 
     [Parameter]
     public RetrieveFillsResponse? Response { get; set; }
 
+    private string? _password;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new(new { });
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        Response = await FillService.GetResponses(Id, null);
+        await TryLoadElements();
+    }
+
+    private async Task TryLoadElements()
+    {
+        try
+        {
+            Response = await FillService.GetResponses(Id, _password);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            if (_state == PageState.Loading) _state = PageState.MissingPassword;
+            else _state = PageState.BadPassword;
+        }
+
     }
 }

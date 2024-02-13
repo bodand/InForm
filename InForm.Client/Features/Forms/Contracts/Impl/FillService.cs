@@ -28,7 +28,10 @@ internal class FillService(
     {
         var uri = $"/api/fills/{id}/:retrieve";
         var request = new RetrieveFillsRequest(id, password);
-        var responsePayload = await PostAsync(request, uri);
+        var response = await httpClient.PostAsJsonAsync(uri, request);
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            throw new UnauthorizedAccessException();
+        var responsePayload = EnsureValidResponse(uri, response);
 
         await using var stream = await responsePayload.Content.ReadAsStreamAsync();
         return await JsonSerializer.DeserializeAsync<RetrieveFillsResponse>(stream, _jsonOptions);
