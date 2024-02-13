@@ -4,7 +4,10 @@
     <thead>
         <tr>
             <td><div class="mb-2 mr-2 border-solid border-b w-fit">Response</div></td>
-            <td class="w-3"><div class="mb-2 mr-2 border-solid border-b w-fit">Cardinality</div></td>
+            @if (NotOnlySingleAnswers)
+            {
+                <td class="w-3"><div class="mb-2 mr-2 border-solid border-b w-fit">Cardinality</div></td>
+            }
         </tr>
     </thead>
     <tbody>
@@ -12,7 +15,10 @@
         {
             <tr>
                 <td><div class="my-1 mr-2">@resp.Key</div></td>
-                <td><div class="my-1 mr-2">@resp.Value</div></td>
+                @if (NotOnlySingleAnswers)
+                {
+                    <td><div class="my-1 mr-2">@resp.Value</div></td>
+                }
             </tr>
         }
     </tbody>
@@ -21,4 +27,6 @@
 @code {
     [Parameter]
     public StringElementResponse Response { get; set; } = default!;
+
+    private bool NotOnlySingleAnswers => Response.Responses.Select(x => x.Value).Any(x => x != 1);
 }
