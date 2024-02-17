@@ -53,6 +53,28 @@ public record CreateStringElement(
     }
 }
 
+public record CreateMultiChoiceElement(
+    string Title,
+    string? Subtitle,
+    bool Required,
+    List<string> Options,
+    int Selectable
+) : CreateFormElement(Title, Subtitle, Required) {
+
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement> typed) return;
+        typed.Visit(this);
+    }
+
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor)
+        where TResult : default
+    {
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement, TResult> typed) return default;
+        return typed.Visit(this);
+    }
+}
+
 /// <summary>
 ///     The response type generated for a valid create form request.
 /// </summary>
