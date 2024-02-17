@@ -1,4 +1,3 @@
-using InForm.Server.Features.FillForms.Db;
 using InForm.Server.Features.Forms.Db;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,16 +25,20 @@ public partial class InFormDbContext
     public async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
     {
         var strings = await StringFormElements.Where(x => x.ParentFormId == form.Id).ToListAsync();
+        var numericRanges = await NumericRangeElements.Where(x => x.ParentFormId == form.Id).ToArrayAsync();
         return [
-            .. strings
+            .. strings,
+            .. numericRanges,
         ];
-    } 
+    }
 
     public async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
     {
         var strings = await StringFormElements.Include(x => x.FillData).Where(x => x.ParentFormId == form.Id).ToListAsync();
+        var numericRanges = await NumericRangeElements.Include(x => x.FillData).Where(x => x.ParentFormId == form.Id).ToArrayAsync();
         return [
-            .. strings
+            .. strings,
+            .. numericRanges,
         ];
     }
 
@@ -45,4 +48,5 @@ public partial class InFormDbContext
     public DbSet<FormElementBase> FormElementBases { get; set; }
 
     public DbSet<StringFormElement> StringFormElements { get; set; }
+    public DbSet<NumericRangeElement> NumericRangeElements { get; set; }
 }

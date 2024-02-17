@@ -17,6 +17,7 @@ public readonly record struct CreateFormRequest(
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(CreateStringElement), "string")]
+[JsonDerivedType(typeof(CreateNumericRangeElement), "nrange")]
 public abstract record CreateFormElement(
     [StringLength(128)]
     string Title,
@@ -49,6 +50,30 @@ public record CreateStringElement(
     public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
     {
         if (visitor is not ITypedVisitor<CreateStringElement, TResult> typedVisitor) return default;
+        return typedVisitor.Visit(this);
+    }
+} 
+
+public record CreateNumericRangeElement(
+    [StringLength(128)]
+    string Title,
+    [StringLength(256)]
+    string? Subtitle,
+    bool Required,
+    int MinRange,
+    int MaxRange,
+    List<string> Questions
+) : CreateFormElement(Title, Subtitle, Required)
+{
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<CreateNumericRangeElement> typedVisitor) return;
+        typedVisitor.Visit(this);
+    }
+
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
+    {
+        if (visitor is not ITypedVisitor<CreateNumericRangeElement, TResult> typedVisitor) return default;
         return typedVisitor.Visit(this);
     }
 }

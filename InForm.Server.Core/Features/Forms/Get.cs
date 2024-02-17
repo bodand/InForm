@@ -12,6 +12,7 @@ public readonly record struct GetFormReponse(
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(GetStringFormElement), "string")]
+[JsonDerivedType(typeof(GetNumericRangeFormElement), "nrange")]
 public abstract record GetFormElement(
     long Id,
     string Title,
@@ -46,6 +47,31 @@ public record GetStringFormElement(
     public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
     {
         if (visitor is not ITypedVisitor<GetStringFormElement, TResult> typedVisitor) return default;
+        return typedVisitor.Visit(this);
+    }
+}
+ 
+public record GetNumericRangeFormElement(
+    long Id,
+    string Title,
+    string? Subtitle,
+    bool Required,
+    int MinRange,
+    int MaxRange,
+    List<string> Questions
+) : GetFormElement(Id, Title, Subtitle, Required)
+{
+    /// <inheritdoc />
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<GetNumericRangeFormElement> typedVisitor) return;
+        typedVisitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
+    {
+        if (visitor is not ITypedVisitor<GetNumericRangeFormElement, TResult> typedVisitor) return default;
         return typedVisitor.Visit(this);
     }
 }

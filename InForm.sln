@@ -13,6 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelConfigurationGenerator
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InForm.Client", "InForm.Client\InForm.Client.csproj", "{2587A838-5BAA-4E57-976B-518A0882B732}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{3AE9AD2A-79E6-4836-90E8-8A1EC5A097EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{8105768D-3E5D-4E31-A5C7-AFBE91C5C4D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{57515256-450E-4511-BD24-1C44654BE2E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +48,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE24F29B-587C-4CC8-A4FB-8FBE34723C8C} = {57515256-450E-4511-BD24-1C44654BE2E1}
+		{6A06FDEC-8591-4D13-9A17-EF3F248ECE4A} = {3AE9AD2A-79E6-4836-90E8-8A1EC5A097EB}
+		{1DACE9DE-D6DB-4D5E-B0B8-6CE2575273FE} = {3AE9AD2A-79E6-4836-90E8-8A1EC5A097EB}
+		{08BDCB09-0651-4FDD-B951-07A978FFB9E9} = {8105768D-3E5D-4E31-A5C7-AFBE91C5C4D2}
+		{2587A838-5BAA-4E57-976B-518A0882B732} = {57515256-450E-4511-BD24-1C44654BE2E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F457898-27E7-4D35-98E5-43B768E28F29}

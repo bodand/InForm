@@ -17,4 +17,5 @@ public partial class InFormDbContext
     public DbSet<FillData> FillData { get; set; }
 
     public DbSet<StringFillData> StringFillData { get; set; }
+    public DbSet<NumericRangeFillData> NumericRangeFillData { get; set; }
 }
