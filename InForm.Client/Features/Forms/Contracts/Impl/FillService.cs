@@ -1,5 +1,6 @@
 ﻿using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Fill;
+using InForm.Server.Core.Features.Forms;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -40,7 +41,7 @@ internal class FillService(
     private static FillRequest CreateFillRequest(FormModel model) => new()
     {
         FormId = model.Id!.Value,
-        Elements = [.. ProcessElements(model.ElementModels, new ToFillVisitor())]
+        Elements = [.. ProcessElements<FillElement>(model.ElementModels, new ToFillVisitor())]
     };
 
     private async Task<HttpResponseMessage> PostAsync<TRequest>(TRequest request, string uri)

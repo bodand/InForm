@@ -31,7 +31,7 @@ internal class FormsService(
         Title = model.Title,
         Subtitle = model.Subtitle,
         Password = model.Password,
-        Elements = [.. ProcessElements(model.ElementModels, new ToCreateDtoVisitor())]
+        Elements = [.. ProcessElements<CreateFormElement>(model.ElementModels, new ToCreateDtoVisitor())]
     };
 
     private static IEnumerable<TResult> ProcessElements<TResult>(IEnumerable<ElementModel> elements, IVisitor<TResult> visitor)

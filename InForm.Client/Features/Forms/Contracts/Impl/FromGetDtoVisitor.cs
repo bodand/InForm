@@ -5,6 +5,7 @@ namespace InForm.Client.Features.Forms.Contracts.Impl;
 
 internal class FromGetDtoVisitor(FormModel model)
     : ITypedVisitor<GetStringFormElement, ElementModel>
+    , ITypedVisitor<GetMultiChoiceElement, ElementModel>
 {
     public ElementModel Visit(GetStringFormElement visited)
         => new StringElementModel(model)
@@ -15,5 +16,14 @@ internal class FromGetDtoVisitor(FormModel model)
             Subtitle = visited.Subtitle,
             TextArea = visited.Multiline,
             Title = visited.Title,
+        };
+
+    public ElementModel Visit(GetMultiChoiceElement visited)
+        => new MultiChoiceElementModel(model)
+        {
+            Id = visited.Id,
+            Title = visited.Title,
+            Subtitle = visited.Subtitle,
+            Options = visited.Options
         };
 }
