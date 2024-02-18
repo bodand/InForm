@@ -61,10 +61,9 @@
         </h3>
 
         <div class="mt-32 flex flex-col w-fit mx-auto">
-            @for (var i = 0; i < Response.Value.Responses.Count; i++)
+            @foreach (var elementResponse in Response.Value.Responses)
             {
-                <ResponseBase FillsResponse="@Response.Value"
-                              ElementResponse="@Response.Value.Responses[i]" />
+                <ResponseBase ElementResponse="@elementResponse" />
             }
         </div>
     }

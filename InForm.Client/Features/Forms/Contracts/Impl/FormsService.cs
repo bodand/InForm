@@ -1,6 +1,7 @@
 ﻿using InForm.Server.Core.Features.Common;
 using InForm.Server.Core.Features.Forms;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace InForm.Client.Features.Forms.Contracts.Impl;
@@ -31,7 +32,7 @@ internal class FormsService(
         Title = model.Title,
         Subtitle = model.Subtitle,
         Password = model.Password,
-        Elements = [.. ProcessElements(model.ElementModels, new ToCreateDtoVisitor())]
+        Elements = [.. ProcessElements<CreateFormElement>(model.ElementModels, new ToCreateDtoVisitor())]
     };
 
     private static IEnumerable<TResult> ProcessElements<TResult>(IEnumerable<ElementModel> elements, IVisitor<TResult> visitor)
@@ -67,7 +68,7 @@ internal class FormsService(
         };
         form.ElementModels.AddRange(from fe in responsePayload.FormElements
                                     let elementVisitor = new FromGetDtoVisitor(form)
-                                    orderby fe.Id
+                                    orderby fe.Id descending 
                                     select fe.Accept(elementVisitor));
         return form;
     }

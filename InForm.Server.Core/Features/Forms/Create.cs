@@ -17,6 +17,7 @@ public readonly record struct CreateFormRequest(
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(CreateStringElement), "string")]
+[JsonDerivedType(typeof(CreateMultiChoiceElement), "mc")]
 public abstract record CreateFormElement(
     [StringLength(128)]
     string Title,
@@ -50,6 +51,28 @@ public record CreateStringElement(
     {
         if (visitor is not ITypedVisitor<CreateStringElement, TResult> typedVisitor) return default;
         return typedVisitor.Visit(this);
+    }
+}
+
+public record CreateMultiChoiceElement(
+    string Title,
+    string? Subtitle,
+    bool Required,
+    List<string> Options,
+    int Selectable
+) : CreateFormElement(Title, Subtitle, Required) {
+
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement> typed) return;
+        typed.Visit(this);
+    }
+
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor)
+        where TResult : default
+    {
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement, TResult> typed) return default;
+        return typed.Visit(this);
     }
 }
 

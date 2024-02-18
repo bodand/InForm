@@ -61,13 +61,13 @@
         StateHasChanged();
     }
 
-    private async Task InvalidSubmit()
+    private Task InvalidSubmit()
     {
-
-        foreach (var msg in _editContext.GetValidationMessages())
+        foreach (var msg in _editContext!.GetValidationMessages())
         {
             Logger.LogInformation($"XXXXXX: {msg}");
         }
+        return Task.CompletedTask;
     }
 
     private async Task SendForm()

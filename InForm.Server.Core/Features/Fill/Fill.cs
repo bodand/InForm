@@ -20,10 +20,10 @@ public readonly record struct FillRequest(
 /// <param name="Id">The identifier of the form element this fill element is for.</param>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(StringFillElement), "string")]
+[JsonDerivedType(typeof(MultiChoiceFillElement), "mc")]
 public abstract record FillElement(
     long Id
-) : IVisitable
-{
+) : IVisitable {
     /// <inheritdoc/>
     public abstract void Accept(IVisitor visitor);
 
@@ -39,8 +39,7 @@ public abstract record FillElement(
 public record StringFillElement(
     long Id,
     string? Value
-) : FillElement(Id)
-{
+) : FillElement(Id) {
     /// <inheritdoc/>
     public override void Accept(IVisitor visitor)
     {
@@ -52,6 +51,25 @@ public record StringFillElement(
     public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
     {
         if (visitor is not ITypedVisitor<StringFillElement, TResult> typed) return default;
+        return typed.Visit(this);
+    }
+}
+
+public record MultiChoiceFillElement(
+    long Id,
+    List<string> Selected
+) : FillElement(Id) {
+    /// <inheritdoc/>
+    public override void Accept(IVisitor visitor)
+    {
+        if (visitor is not ITypedVisitor<MultiChoiceFillElement> typed) return;
+        typed.Visit(this);
+    }
+
+    /// <inheritdoc/>
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
+    {
+        if (visitor is not ITypedVisitor<MultiChoiceFillElement, TResult> typed) return default;
         return typed.Visit(this);
     }
 }

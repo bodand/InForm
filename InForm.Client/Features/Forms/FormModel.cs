@@ -37,6 +37,7 @@ public class CreateFormValidator : AbstractValidator<FormModel>
             .SetInheritanceValidator(poly =>
             {
                 poly.Add(new StringElementValidator());
+                poly.Add(new MultiChoiceElementValidator());
             })
             .SetValidator(new CreateElementValidator());
     }
