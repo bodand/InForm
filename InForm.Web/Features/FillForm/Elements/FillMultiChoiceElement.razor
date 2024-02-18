@@ -1,6 +1,5 @@
 ﻿@inherits InputBase<MultiChoiceElementFillData>
 
-
 @if ((CurrentValue?.Model.MaxSelected ?? 1) == 1)
 {
     <InputRadioGroup @bind-Value="FirstSelected">
@@ -10,6 +9,18 @@
             <div class="my-2.5">
                 <InputRadio id="@IdFromIndex(idx)" Value="@Options[idx]"/>
                 <label for="@IdFromIndex(idx)">@Options[idx]</label>
+            </div>
+        }
+        @if (!(CurrentValue?.Model.Required ?? false) && FirstSelected is not null)
+        {
+            <div class="w-full flex flex-row-reverse">
+                <button type="button"
+                        class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                               hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                               hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100"
+                        @onclick="ClearRadioSelection">
+                    Clear
+                </button>
             </div>
         }
     </InputRadioGroup>
@@ -37,8 +48,12 @@ else
         get => CurrentValue?.Selected.FirstOrDefault();
         set
         {
-            if (value == null) return;
             if (CurrentValue == null) return;
+            if (value == null)
+            {
+                CurrentValue.Selected.Clear();
+                return;
+            }
             CurrentValue.Selected = [value];
         }
     }
@@ -56,7 +71,7 @@ else
         }
 
         AddSelected(value);
-    } 
+    }
 
     private bool AddSelected(string value)
     {
@@ -66,4 +81,5 @@ else
 
     private bool RemoveSelected(string value) => CurrentValue!.Selected.Remove(value);
 
+    private void ClearRadioSelection() => FirstSelected = null;
 }

@@ -30,7 +30,7 @@ public partial class InFormDbContext {
                     .AutoInclude();
     }
 
-    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
+    internal async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
     {
         var strings = await SelectFormElementsIn(form, StringFormElements);
         var multis = await SelectFormElementsIn(form, MultiChoiceFormElements);
@@ -41,12 +41,15 @@ public partial class InFormDbContext {
         ];
     }
 
-    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
+    internal async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
     {
         var strings = await SelectFormElementsIn(form,
                                                  StringFormElements.Include(x => x.FillData));
         var multis = await SelectFormElementsIn(form,
-                                                MultiChoiceFormElements.Include(x => x.FillData));
+                                                MultiChoiceFormElements
+                                                    .Include(x => x.FillData)
+                                                    .ThenInclude(x => x.Selected)
+                                                    .ThenInclude(x => x.Option));
         return
         [
             .. strings,

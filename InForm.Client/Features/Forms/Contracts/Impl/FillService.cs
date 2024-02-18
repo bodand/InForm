@@ -8,8 +8,7 @@ namespace InForm.Client.Features.Forms.Contracts.Impl;
 
 internal class FillService(
     HttpClient httpClient
-) : IFillService
-{ 
+) : IFillService {
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         AllowTrailingCommas = true,
@@ -35,7 +34,8 @@ internal class FillService(
         var responsePayload = EnsureValidResponse(uri, response);
 
         await using var stream = await responsePayload.Content.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<RetrieveFillsResponse>(stream, _jsonOptions);
+        var ret = await JsonSerializer.DeserializeAsync<RetrieveFillsResponse>(stream, _jsonOptions);
+        return ret with { Responses = [..ret.Responses.OrderBy(x => x.Id)] };
     }
 
     private static FillRequest CreateFillRequest(FormModel model) => new()
@@ -52,14 +52,15 @@ internal class FillService(
 
     private static HttpResponseMessage EnsureValidResponse(string uri, HttpResponseMessage response)
     {
-        if (!response.IsSuccessStatusCode) // todo proper exception type
+        if (!response.IsSuccessStatusCode)// todo proper exception type
             throw new ApplicationException($"Failed communicating with service: {uri} returned {response.StatusCode}");
         return response;
     }
 
     private static IEnumerable<TResult> ProcessElements<TResult>(IEnumerable<ElementModel> elements, IVisitor<TResult> visitor)
         where TResult : notnull
-        => from e in elements
-           select e.Accept(visitor);
+        =>
+            from e in elements
+            select e.Accept(visitor);
 
 }

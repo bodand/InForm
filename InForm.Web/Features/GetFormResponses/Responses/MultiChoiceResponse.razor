@@ -1,6 +1,32 @@
-﻿<h3>MultiChoiceResponse</h3>
+﻿@using InForm.Server.Core.Features.Fill
+
+<table class="w-full">
+    <thead>
+    <tr>
+        <td>
+            <div class="mb-2 mr-2 border-solid border-b w-fit">Response</div>
+        </td>
+        <td class="w-3">
+            <div class="mb-2 mr-2 border-solid border-b w-fit">Cardinality</div>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var resp in Response.Responses)
+    {
+        <tr>
+            <td>
+                <div class="my-1 mr-2">@resp.Key</div>
+            </td>
+            <td>
+                <div class="my-1 mr-2">@resp.Value</div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 @code {
     [Parameter]
-    public MultiChoiceElementFillData { get; set; } = default!;
+    public MultiChoiceElementResponse Response { get; set; } = default!;
 }

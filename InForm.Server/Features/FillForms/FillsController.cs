@@ -1,4 +1,5 @@
-﻿using InForm.Server.Core.Features.Fill;
+﻿using InForm.Server.Core.Features.Common;
+using InForm.Server.Core.Features.Fill;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
 using InForm.Server.Features.FillForms.Db;
@@ -101,7 +102,7 @@ public class FillsController(
         }
 
         var formElements = await dbContext.LoadAllElementsForFormWithData(form);
-        var visitor = new ToResponseDtoVisitor();
+        IVisitor<ElementResponse> visitor = new ToResponseDtoVisitor();
         var response = new RetrieveFillsResponse(
             form.Title,
             form.Subtitle,

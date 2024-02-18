@@ -16,15 +16,15 @@ public class MultiChoiceFormElement : FormElementBase {
     public int MaxSelected { get; set; } = 1;
 
     /// <summary>
-    ///     The list of options in the multi-choice.
+    ///     The list of options in the multi-choice. Not ordered.
     /// </summary>
     public List<MultiChoiceOption> Options { get; set; } = [];
 
     /// <summary>
-    ///     The list of options as strings.
+    ///     The list of options as strings ordered in form input order.
     /// </summary>
     [NotMapped]
-    public IEnumerable<string> StringOptions => Options.Select(x => x.Value);
+    public IEnumerable<string> StringOptions => Options.OrderBy(x => x.Id).Select(x => x.Value);
 
     /// <summary>
     ///     The fill data of the form element entity.

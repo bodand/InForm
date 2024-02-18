@@ -50,6 +50,10 @@ public class MultiChoiceValueValidator : AbstractValidator<MultiChoiceElementFil
     public MultiChoiceValueValidator()
     {
         When(x => x is not null, () => {
+            When(x => x?.Model.Required ?? false, () => {
+                RuleFor(x => x!.Selected).NotEmpty().WithMessage("This field is required");
+            });
+
             RuleForEach(x => x!.Selected)
                 .Must((fill, selected) => fill!.Model.Options.Contains(selected))
                 .WithMessage("Selected value must be in element valid options");

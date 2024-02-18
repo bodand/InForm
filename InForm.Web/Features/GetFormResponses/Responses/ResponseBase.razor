@@ -1,11 +1,14 @@
 ﻿@using InForm.Server.Core.Features.Fill
 <div class="my-4">
-    <ResponseShell Title="@FillsResponse.Title"
-                   Subtitle="@FillsResponse.Subtitle">
+    <ResponseShell Title="@ElementResponse.Title"
+                   Subtitle="@ElementResponse.Subtitle">
         @switch (ElementResponse)
         {
             case StringElementResponse strings:
-                <StringResponse Response="@strings"></StringResponse>
+                <StringResponse Response="@strings"/>
+                break;
+            case MultiChoiceElementResponse multi:
+                <MultiChoiceResponse Response="@multi"/>
                 break;
         }
     </ResponseShell>
@@ -13,10 +16,5 @@
 
 @code {
     [Parameter]
-    public RetrieveFillsResponse FillsResponse { get; set; } = default!;
-
-    [Parameter]
     public ElementResponse ElementResponse { get; set; } = default!;
-
-
 }
