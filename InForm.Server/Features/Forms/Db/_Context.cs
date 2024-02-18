@@ -1,46 +1,65 @@
+using InForm.Server.Features.FillForms.Db;
 using InForm.Server.Features.Forms.Db;
+using InForm.Server.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 namespace InForm.Server.Db;
 
-public partial class InFormDbContext
-{
+public partial class InFormDbContext {
     [ModelConfiguration]
     private static void ConfigureFormElements(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Form>()
-            .HasMany(x => x.FormElementBases)
-            .WithOne(x => x.ParentForm)
-            .OnDelete(DeleteBehavior.Cascade);
+                    .HasMany(x => x.FormElementBases)
+                    .WithOne(x => x.ParentForm)
+                    .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<FormElementBase>()
-            .UseTphMappingStrategy();
+                    .UseTphMappingStrategy();
 
         modelBuilder.Entity<StringFormElement>()
-            .HasMany(x => x.FillData)
-            .WithOne(x => x.ParentElement)
-            .OnDelete(DeleteBehavior.Cascade);
+                    .HasMany(x => x.FillData)
+                    .WithOne(x => x.ParentElement)
+                    .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MultiChoiceFormElement>()
+                    .HasMany(x => x.FillData)
+                    .WithOne(x => x.ParentElement)
+                    .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MultiChoiceFormElement>()
+                    .Navigation(x => x.Options)
+                    .AutoInclude();
     }
 
-    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
+    internal async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)
     {
-        var strings = await StringFormElements.Where(x => x.ParentFormId == form.Id).ToListAsync();
-        var numericRanges = await NumericRangeElements.Where(x => x.ParentFormId == form.Id).ToArrayAsync();
-        return [
+        var strings = await SelectFormElementsIn(form, StringFormElements);
+        var multis = await SelectFormElementsIn(form, MultiChoiceFormElements);
+        return
+        [
             .. strings,
-            .. numericRanges,
+            .. multis
         ];
     }
 
-    public async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
+    internal async Task<IEnumerable<FormElementBase>> LoadAllElementsForFormWithData(Form form)
     {
-        var strings = await StringFormElements.Include(x => x.FillData).Where(x => x.ParentFormId == form.Id).ToListAsync();
-        var numericRanges = await NumericRangeElements.Include(x => x.FillData).Where(x => x.ParentFormId == form.Id).ToArrayAsync();
-        return [
+        var strings = await SelectFormElementsIn(form,
+                                                 StringFormElements.Include(x => x.FillData));
+        var multis = await SelectFormElementsIn(form,
+                                                MultiChoiceFormElements
+                                                    .Include(x => x.FillData)
+                                                    .ThenInclude(x => x.Selected)
+                                                    .ThenInclude(x => x.Option));
+        return
+        [
             .. strings,
-            .. numericRanges,
+            .. multis
         ];
     }
+
+    private async Task<IEnumerable<TElement>> SelectFormElementsIn<TElement>(Form form, IQueryable<TElement> source)
+        where TElement : FormElementBase
+        => await source.Where(x => x.ParentFormId == form.Id).ToListAsync();
 
 #nullable disable
     public DbSet<Form> Forms { get; set; }
@@ -48,5 +67,6 @@ public partial class InFormDbContext
     public DbSet<FormElementBase> FormElementBases { get; set; }
 
     public DbSet<StringFormElement> StringFormElements { get; set; }
-    public DbSet<NumericRangeElement> NumericRangeElements { get; set; }
+    public DbSet<MultiChoiceFormElement> MultiChoiceFormElements { get; set; }
+    public DbSet<MultiChoiceOption> MultiChoiceOptions { get; set; }
 }

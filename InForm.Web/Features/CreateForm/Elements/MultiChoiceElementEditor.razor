@@ -1,0 +1,87 @@
+﻿@inherits InputBase<MultiChoiceElementModel>
+
+<ElementShell Element="@CurrentValue" Title="Multi-choice element">
+    <div class="flex flex-col md:flex-row">
+        <BoolEntry Class="mt-6 mr-5 w-fit"
+                   Id="mc_elem_required"
+                   Label="Fill required"
+                   @bind-Value="CurrentValue!.Required"
+                   ValidationFor="@(() => CurrentValue!.Required)"/>
+    </div>
+    <div class="flex flex-col md:flex-row">
+        <TextEntry Class="mt-6 mr-5 w-full md:w-1/2"
+                   Id="mc_elem_title"
+                   Label="Title"
+                   @bind-Value="CurrentValue!.Title"
+                   ValidationFor="@(() => CurrentValue!.Title)"/>
+        <TextEntry Class="mt-6 w-full md:w-1/2"
+                   Id="mc_elem_subtitle"
+                   Label="Subtitle"
+                   @bind-Value="CurrentValue!.Subtitle"
+                   ValidationFor="@(() => CurrentValue!.Subtitle)"/>
+    </div>
+    <div class="flex flex-col md:flex-row">
+        <NumberEntry Class="mt-6 mr-5 w-full md:w-1/2"
+                     Id="mc_elem_max"
+                     Label="Maximum selectable"
+                     @bind-Value="CurrentValue!.MaxSelected"
+                     ValidationFor="@(() => CurrentValue!.MaxSelected)"/>
+    </div>
+
+    <div class="my-3 flex flex-row justify-between">
+        <div>
+            <h3 class="text-base md:text-lg w-fit border-solid border-b-2 border-slate-400">
+                Options
+            </h3>
+            <ValidationMessage For="@(() => CurrentValue.Options)" />
+        </div>
+
+        <button class="w-fit border-solid border-b-2 
+                       hover:border-slate-50 hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100
+					   hover:bg-rose-500 p-2"
+                type="button"
+                @onclick=@(() => CurrentValue.Options.Add(string.Empty))>
+            Add option
+        </button>
+    </div>
+
+    @for (var i = 0; i < CurrentValue.Options.Count; ++i)
+    {
+        var idx = i;// make externally unchanged copy
+        <div class="flex flex-row">
+            <TextEntry Class=""
+                       Id="@IndexToOptionId(idx)"
+                       Label="@IndexToOptionLabel(idx)"
+                       @bind-Value="CurrentValue!.Options[idx]"
+                       ValidationFor="@(() => CurrentValue!.Options[idx])"/>
+
+            <button type="button"
+                    class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                           hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                           hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100"
+                    @onclick="@(() => CurrentValue.Options.RemoveAt(idx))">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                </svg>
+            </button>
+
+            <button type="button"
+                    class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                           hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                           hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100"
+                    @onclick="@(() => CurrentValue.Options.Insert(idx, string.Empty))">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+            </button>
+        </div>
+    }
+</ElementShell>
+
+@code {
+    private string IndexToOptionId(int idx) => $"mc_opt_{idx}";
+    private string IndexToOptionLabel(int idx) => $"Option {idx}";
+
+    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementModel result, out string? validationErrorMessage)
+        => throw new NotImplementedException();
+}

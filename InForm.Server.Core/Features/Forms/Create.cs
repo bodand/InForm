@@ -17,7 +17,7 @@ public readonly record struct CreateFormRequest(
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(CreateStringElement), "string")]
-[JsonDerivedType(typeof(CreateNumericRangeElement), "nrange")]
+[JsonDerivedType(typeof(CreateMultiChoiceElement), "mc")]
 public abstract record CreateFormElement(
     [StringLength(128)]
     string Title,
@@ -52,29 +52,27 @@ public record CreateStringElement(
         if (visitor is not ITypedVisitor<CreateStringElement, TResult> typedVisitor) return default;
         return typedVisitor.Visit(this);
     }
-} 
+}
 
-public record CreateNumericRangeElement(
-    [StringLength(128)]
+public record CreateMultiChoiceElement(
     string Title,
-    [StringLength(256)]
     string? Subtitle,
     bool Required,
-    int MinRange,
-    int MaxRange,
-    List<string> Questions
-) : CreateFormElement(Title, Subtitle, Required)
-{
+    List<string> Options,
+    int Selectable
+) : CreateFormElement(Title, Subtitle, Required) {
+
     public override void Accept(IVisitor visitor)
     {
-        if (visitor is not ITypedVisitor<CreateNumericRangeElement> typedVisitor) return;
-        typedVisitor.Visit(this);
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement> typed) return;
+        typed.Visit(this);
     }
 
-    public override TResult? Accept<TResult>(IVisitor<TResult> visitor) where TResult : default
+    public override TResult? Accept<TResult>(IVisitor<TResult> visitor)
+        where TResult : default
     {
-        if (visitor is not ITypedVisitor<CreateNumericRangeElement, TResult> typedVisitor) return default;
-        return typedVisitor.Visit(this);
+        if (visitor is not ITypedVisitor<CreateMultiChoiceElement, TResult> typed) return default;
+        return typed.Visit(this);
     }
 }
 

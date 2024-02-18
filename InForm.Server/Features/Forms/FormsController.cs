@@ -1,4 +1,5 @@
-﻿using InForm.Server.Core.Features.Forms;
+﻿using InForm.Server.Core.Features.Common;
+using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
 using InForm.Server.Features.Forms.Db;
@@ -19,7 +20,8 @@ namespace InForm.Server.Features.Forms;
 [Produces("application/json")]
 public class FormsController(
     InFormDbContext dbContext,
-    IPasswordHasher passwordHasher
+    IPasswordHasher passwordHasher,
+    ILogger<FormsController> logger
 ) : ControllerBase
 {
     /// <summary>
@@ -36,7 +38,7 @@ public class FormsController(
                                         .SingleOrDefaultAsync(x => x.IdGuid == id);
         if (form is null) return NotFound();
 
-        var toDtoVisitor = new ToGetDtoVisitor();
+        IVisitor<GetFormElement> toDtoVisitor = new ToGetDtoVisitor();
         var elems = form.FormElementBases.AsParallel()
                                          .Select(x => x.Accept(toDtoVisitor)!)
                                          .ToList();
@@ -92,8 +94,9 @@ public class FormsController(
         {
             return Conflict();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(new(2,"error"), ex, "Error processing form creation request.");
             return BadRequest();
         }
     }
@@ -107,7 +110,7 @@ public class FormsController(
             PasswordHash = form.Password is null ? null : passwordHasher.Hash(form.Password),
             FormElementBases = []
         };
-        var elementVisitor = new FromCreateDtoVisitor(res);
+        IVisitor<FormElementBase> elementVisitor = new FromCreateDtoVisitor(res);
         res.FormElementBases.AddRange(from elem in form.Elements
                                       select elem.Accept(elementVisitor));
 

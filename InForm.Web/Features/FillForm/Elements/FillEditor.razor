@@ -5,7 +5,11 @@
         @switch (CurrentValue)
         {
             case StringElementModel stringElementModel:
-                <FillStringElement @bind-Value=stringElementModel.FillData />
+                <FillStringElement @bind-Value=stringElementModel.FillData/>
+                break;
+            case MultiChoiceElementModel multiChoiceElementModel:
+                <ValidationMessage For="@(() => multiChoiceElementModel.FillData!.Selected)" />
+                <FillMultiChoiceElement @bind-Value="multiChoiceElementModel.FillData"/>
                 break;
         }
     </FillShell>
