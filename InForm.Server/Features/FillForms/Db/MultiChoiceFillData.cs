@@ -11,7 +11,7 @@ public class MultiChoiceFillData : FillData {
     /// <summary>
     ///     The form element this fill data is for.
     /// </summary>
-    public StringFormElement? ParentElement { get; set; }
+    public MultiChoiceFormElement? ParentElement { get; set; }
 
     /// <summary>
     ///     The list of selected options in this form element fill data.

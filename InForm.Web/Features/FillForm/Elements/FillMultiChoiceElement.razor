@@ -1,0 +1,69 @@
+﻿@inherits InputBase<MultiChoiceElementFillData>
+
+
+@if ((CurrentValue?.Model.MaxSelected ?? 1) == 1)
+{
+    <InputRadioGroup @bind-Value="FirstSelected">
+        @for (var i = 0; i < Options.Count; ++i)
+        {
+            var idx = i;
+            <div class="my-2.5">
+                <InputRadio id="@IdFromIndex(idx)" Value="@Options[idx]"/>
+                <label for="@IdFromIndex(idx)">@Options[idx]</label>
+            </div>
+        }
+    </InputRadioGroup>
+}
+else
+{
+    <div class="flex flex-col">
+        @for (var i = 0; i < Options.Count; ++i)
+        {
+            var idx = i;
+            <div class="my-2.5">
+                <input type="checkbox" id="@IdFromIndex(idx)" @onclick="@(() => SelectionChanged(Options[idx]))"/>
+                <label for="@IdFromIndex(idx)">@Options[idx]</label>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<string> Options => CurrentValue?.Model.Options ?? [];
+    private string IdFromIndex(int idx) => $"mc_{CurrentValue?.Model.Id}_fill_opt_{idx}";
+
+    private string? FirstSelected
+    {
+        get => CurrentValue?.Selected.FirstOrDefault();
+        set
+        {
+            if (value == null) return;
+            if (CurrentValue == null) return;
+            CurrentValue.Selected = [value];
+        }
+    }
+
+    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementFillData result, out string? validationErrorMessage)
+        => throw new NotImplementedException();
+
+    private void SelectionChanged(string value)
+    {
+        var haveValue = CurrentValue!.Selected.Contains(value);
+        if (haveValue)
+        {
+            RemoveSelected(value);
+            return;
+        }
+
+        AddSelected(value);
+    } 
+
+    private bool AddSelected(string value)
+    {
+        CurrentValue!.Selected.Add(value);
+        return true;
+    }
+
+    private bool RemoveSelected(string value) => CurrentValue!.Selected.Remove(value);
+
+}

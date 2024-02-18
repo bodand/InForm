@@ -6,7 +6,7 @@ namespace InForm.Client.Features.Forms;
 
 public class MultiChoiceElementModel(FormModel parent) : ElementModel(parent) {
     public List<string> Options { get; set; } = [];
-    public int MaxSelected { get; set; } = 1;
+    public int MaxSelected { get; set; }
 
     public MultiChoiceElementFillData? FillData { get; set; }
 
@@ -35,25 +35,30 @@ public class MultiChoiceElementFillData(MultiChoiceElementModel model) {
 public class MultiChoiceElementValidator : AbstractValidator<MultiChoiceElementModel> {
     public MultiChoiceElementValidator()
     {
+        RuleFor(x => x.MaxSelected)
+            .GreaterThanOrEqualTo(1)
+            .WithMessage("The minimum of {ComparisonValue} must be selected for maximum");
         RuleFor(x => x.Options)
             .NotEmpty()
             .WithMessage("At least one option must be supplied");
+        RuleFor(x => x.FillData)
+            .SetValidator(new MultiChoiceValueValidator());
     }
 }
 
-public class MultiChoiceValueValidator : AbstractValidator<MultiChoiceElementFillData> {
+public class MultiChoiceValueValidator : AbstractValidator<MultiChoiceElementFillData?> {
     public MultiChoiceValueValidator()
     {
-        RuleForEach(x => x.Selected)
-            .MinimumLength(1)
-            .WithMessage("At least one character must be provided")
-            .Must((fill, selected) => fill.Model.Options.Contains(selected))
-            .WithMessage("Selected value must be in element valid options");
-        RuleFor(x => x.Selected)
-            .Must((fill, selects) => selects.Count <= fill.Model.MaxSelected)
-            .WithMessage(fill => {
-                var max = fill.Model.MaxSelected;
-                return $"A maximum of {max} can be selected";
-            });
+        When(x => x is not null, () => {
+            RuleForEach(x => x!.Selected)
+                .Must((fill, selected) => fill!.Model.Options.Contains(selected))
+                .WithMessage("Selected value must be in element valid options");
+            RuleFor(x => x!.Selected)
+                .Must((fill, selects) => selects.Count <= fill!.Model.MaxSelected)
+                .WithMessage(fill => {
+                    var max = fill!.Model.MaxSelected;
+                    return $"A maximum of {max} can be selected";
+                });
+        });
     }
 }

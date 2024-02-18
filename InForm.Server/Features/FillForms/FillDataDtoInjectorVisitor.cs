@@ -7,8 +7,8 @@ using InForm.Server.Features.Forms.Db;
 namespace InForm.Server.Features.FillForms;
 
 internal class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement) :
-    ITypedVisitor<StringFillElement>
-{
+    ITypedVisitor<StringFillElement>,
+    ITypedVisitor<MultiChoiceFillElement> {
     public void Visit(StringFillElement visited)
     {
         if (formElement is not StringFormElement stringForm)
@@ -19,6 +19,25 @@ internal class FillDataDtoInjectorVisitor(Fill fill, FormElementBase formElement
             ParentElement = stringForm,
             Value = visited.Value,
             Fill = fill,
+        });
+    }
+    public void Visit(MultiChoiceFillElement visited)
+    {
+        if (formElement is not MultiChoiceFormElement multiChoiceForm)
+            throw new InvalidOperationException();
+
+        multiChoiceForm.FillData.Add(new()
+        {
+            ParentElement = multiChoiceForm,
+            Fill = fill,
+            FillId = fill.Id,
+            Selected =
+            [
+                ..visited.Selected.Select(selected => new MultiChoiceFillSelection()
+                {
+                    OptionId = multiChoiceForm.Options.Single(x => x.Value == selected).Id
+                })
+            ]
         });
     }
 }

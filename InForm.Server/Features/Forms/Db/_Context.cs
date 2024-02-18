@@ -21,6 +21,13 @@ public partial class InFormDbContext {
                     .HasMany(x => x.FillData)
                     .WithOne(x => x.ParentElement)
                     .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MultiChoiceFormElement>()
+                    .HasMany(x => x.FillData)
+                    .WithOne(x => x.ParentElement)
+                    .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MultiChoiceFormElement>()
+                    .Navigation(x => x.Options)
+                    .AutoInclude();
     }
 
     public async Task<IEnumerable<FormElementBase>> LoadAllElementsForForm(Form form)

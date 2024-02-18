@@ -25,11 +25,11 @@ public class MultiChoiceFormElement : FormElementBase {
     /// </summary>
     [NotMapped]
     public IEnumerable<string> StringOptions => Options.Select(x => x.Value);
-    
+
     /// <summary>
     ///     The fill data of the form element entity.
     /// </summary>
-    public MultiChoiceFillData? FillData { get; set; }
+    public List<MultiChoiceFillData> FillData { get; set; } = [];
 
     /// <inheritdoc />
     public override void Accept(IVisitor visitor)

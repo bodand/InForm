@@ -20,6 +20,7 @@ public readonly record struct FillRequest(
 /// <param name="Id">The identifier of the form element this fill element is for.</param>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(StringFillElement), "string")]
+[JsonDerivedType(typeof(MultiChoiceFillElement), "mc")]
 public abstract record FillElement(
     long Id
 ) : IVisitable {

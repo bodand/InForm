@@ -17,6 +17,7 @@ public readonly record struct CreateFormRequest(
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(CreateStringElement), "string")]
+[JsonDerivedType(typeof(CreateMultiChoiceElement), "mc")]
 public abstract record CreateFormElement(
     [StringLength(128)]
     string Title,

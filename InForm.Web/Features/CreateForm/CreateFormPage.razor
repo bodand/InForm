@@ -1,4 +1,5 @@
 @page "/Create"
+@inject ILogger<CreateFormPage> Logger
 @inject IFormsService FormsService
 @inject NavigationManager NavigationManager
 @implements IDisposable
@@ -50,12 +51,20 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
                     </svg>
-                    <div class="absolute top-10 left-0 @DropDownVisibility p-2 w-full
-                                text-zinc-100 bg-slate-950 dark:text-zinc-950 dark:bg-slate-100">
-                        <button type="button" @onclick=@(() => AddNewElement<StringElementModel>())>
-                            Text element
-                        </button>
-                    </div>
+                    <button type="button"
+                            class="absolute top-10 left-0 @DropDownVisibility p-2 w-full
+                                   text-zinc-100 dark:text-zinc-950 no-underline hover:underline
+                                   bg-slate-950 hover:bg-slate-950 dark:bg-slate-100 hover:dark:bg-slate-100"
+                            @onclick=@(AddNewElement<StringElementModel>)>
+                        Text element
+                    </button>
+                    <button type="button"
+                            class="absolute top-[4.5rem] left-0 @DropDownVisibility p-2 w-full
+                                   text-zinc-100 dark:text-zinc-950 hover:underline
+                                   bg-slate-950 hover:bg-slate-950 dark:bg-slate-100 hover:dark:bg-slate-100"
+                            @onclick=@(AddNewElement<MultiChoiceElementModel>)>
+                        Multi-choice element
+                    </button>
                 </div>
             </div>
             <ValidationMessage For="@(() => CreateForm.ElementModels)"></ValidationMessage>
@@ -83,9 +92,10 @@
             var id = await FormsService.CreateForm(CreateForm);
             NavigationManager.NavigateTo($"/form/{id}");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // todo do something useful
+            // todo extract to logger method
+            Logger.LogError(new(1, "uncaught-ex-create-form"), ex, "Unexpected exception occurred during form creation");
         }
     }
 

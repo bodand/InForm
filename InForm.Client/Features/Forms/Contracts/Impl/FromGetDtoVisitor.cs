@@ -24,6 +24,8 @@ internal class FromGetDtoVisitor(FormModel model)
             Id = visited.Id,
             Title = visited.Title,
             Subtitle = visited.Subtitle,
-            Options = visited.Options
+            Options = visited.Options,
+            MaxSelected = visited.Selectable,
+            Required = visited.Required
         };
 }

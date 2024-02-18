@@ -1,16 +1,18 @@
 @inherits InputBase<ElementModel>
 
 <div class="my-4">
-	@switch (CurrentValue)
-	{
-		case StringElementModel stringElementModel:
-			<StringElementEditor @bind-Value=stringElementModel />
-			break;
-	}
+    @switch (CurrentValue)
+    {
+        case StringElementModel stringElementModel:
+            <StringElementEditor @bind-Value="stringElementModel"/>
+            break;
+        case MultiChoiceElementModel multiChoiceElementModel:
+            <MultiChoiceElementEditor @bind-Value="multiChoiceElementModel"/>
+            break;
+    }
 </div>
 
 @code {
-	protected override bool TryParseValueFromString(string? value, out ElementModel result, out string? validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out ElementModel result, out string? validationErrorMessage)
         => throw new NotImplementedException();
-
 }
