@@ -11,16 +11,24 @@
           EditContext="_editContext"
           OnValidSubmit="DoOpenForm"
           class="flex flex-col items-start py-4">
-    <FluentValidationValidator />
+    <FluentValidationValidator/>
 
     <TextEntry Id="form_id"
                Class="w-full"
                Label="FormID"
                @bind-Value="SearchForm!.FormId"
-               ValidationFor="@(() => SearchForm!.FormId)" />
+               ValidationFor="@(() => SearchForm!.FormId)"/>
     <div>@_errorText</div>
 
-    <div class="w-full flex flex-row-reverse">
+    <div class="w-full flex flex-row justify-between">
+        <a href="/Create"
+           class="no-underline text-zinc-950 dark:text-zinc-100">
+            <div class="block border-b-2 border-solid border-slate-400 p-2 my-4 focus:ring-0
+                        hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                        hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+                Create
+            </div>
+        </a>
         <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
                        hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
                        hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">

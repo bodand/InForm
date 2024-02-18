@@ -1,10 +1,20 @@
 ﻿@page "/form/{Id:guid}/filled"
 @inject IFormsService FormsService
 
-<FormHeader Title="@Title" Subtitle="@Subtitle" />
+<FormHeader Title="@Title" Subtitle="@Subtitle"/>
 
 <div class="mt-32 flex flex-col w-fit mx-auto">
     Thank you for filling out this form.
+    <a class="no-underline text-zinc-950 dark:text-zinc-100"
+       href="/form/@Id/responses">
+        <div class="flex flex-row-reverse w-full">
+            <button class="block border-b-2 border-slate-400 p-2 my-4 focus:ring-0
+                           hover:bg-slate-950 hover:dark:bg-slate-100 hover:border-slate-50
+                           hover:dark:border-slate-950 hover:dark:text-zinc-950 hover:text-zinc-100">
+                See results
+            </button>
+        </div>
+    </a>
 </div>
 
 @code {
