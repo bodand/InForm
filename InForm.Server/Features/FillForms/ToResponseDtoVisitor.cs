@@ -14,7 +14,7 @@ internal class ToResponseDtoVisitor :
             from fd in visited.FillData
             group fd.Value by fd.Value into respGroup
             select new { Value = respGroup.Key, Count = respGroup.Count() };
-        var dict = query.ToDictionary(x => x.Value, x => x.Count);
+        var dict = query.ToDictionary(x => x.Value ?? string.Empty, x => x.Count);
         return new(visited.Id,
                    visited.Title,
                    visited.Subtitle,
