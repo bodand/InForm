@@ -68,7 +68,7 @@ internal class FormsService(
         };
         form.ElementModels.AddRange(from fe in responsePayload.FormElements
                                     let elementVisitor = new FromGetDtoVisitor(form)
-                                    orderby fe.Id descending 
+                                    orderby fe.Id
                                     select fe.Accept(elementVisitor));
         return form;
     }
