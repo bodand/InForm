@@ -1,0 +1,36 @@
+= InForm
+
+InForm is an open source form creation servicce. 
+It works in a fully anonymous way, without the burden of having to create a user, and completely free of any personal trackers.
+
+== Features
+
+- Create forms without registering
+- Respond to forms without registering
+- Hide the answers to your form behind a password
+- Nicely formatted tables for the answers
+- Modern, minimalistic and responsive UI for form creation and response
+
+== Building 
+
+Building should work with the default dotnet tooling, however building an updated fronted requires Tailwind CSS to be installed.
+
+[source]
+----
+$ dotnet build
+----
+
+.Build Tailwind CSS
+[source]
+----
+$ cd InForm.Web
+$ tailwindcss -m -i Styles/app.css -o wwwroot/css/app.css <1>
+----
+1: You can leave the `-m` out for debugging purposes.
+
+The frontend project is `InForm.Web` while the backend is `InForm.Server`.
+
+== License
+
+The project is licensed under the BSD 3-Clause license (SPDX: BSD-3-Clause).
+For more information see `LICENSE.adoc`.
