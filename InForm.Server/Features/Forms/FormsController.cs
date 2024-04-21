@@ -3,6 +3,7 @@ using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
 using InForm.Server.Features.Forms.Db;
+using InForm.Server.Features.Forms.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,9 +22,9 @@ namespace InForm.Server.Features.Forms;
 public class FormsController(
     InFormDbContext dbContext,
     IPasswordHasher passwordHasher,
+    IFormsService formsService,
     ILogger<FormsController> logger
-) : ControllerBase
-{
+) : ControllerBase {
     /// <summary>
     ///     Return a form by the given form, identified by its id.
     /// </summary>
@@ -33,17 +34,16 @@ public class FormsController(
     [ProducesResponseType(404)]
     public async Task<ActionResult<GetFormReponse>> GetForm(Guid id)
     {
-        var form = await dbContext.Forms.AsNoTracking()
-                                        .Include(x => x.FormElementBases)
-                                        .SingleOrDefaultAsync(x => x.IdGuid == id);
-        if (form is null) return NotFound();
-
-        IVisitor<GetFormElement> toDtoVisitor = new ToGetDtoVisitor();
-        var elems = form.FormElementBases.AsParallel()
-                                         .Select(x => x.Accept(toDtoVisitor)!)
-                                         .ToList();
-
-        return new GetFormReponse(form.IdGuid, form.Title, form.Subtitle, elems);
+        try
+        {
+            IVisitor<GetFormElement> toDtoVisitor = new ToGetDtoVisitor();
+            var (form, elems) = await formsService.GetFormWithElements(dbContext, id, toDtoVisitor);
+            return new GetFormReponse(form.IdGuid, form.Title, form.Subtitle, elems);
+        }
+        catch (EntityNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     /// <summary>
@@ -57,11 +57,15 @@ public class FormsController(
     [ProducesResponseType(404)]
     public async Task<ActionResult<GetFormNameResponse>> GetFormName(Guid id)
     {
-        var form = await dbContext.Forms.AsNoTracking()
-                                        .SingleOrDefaultAsync(x => x.IdGuid == id);
-        if (form is null) return NotFound();
-
-        return new GetFormNameResponse(form.IdGuid, form.Title, form.Subtitle);
+        try
+        {
+            var form = await formsService.GetForm(dbContext, id);
+            return new GetFormNameResponse(form.IdGuid, form.Title, form.Subtitle);
+        }
+        catch (EntityNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     /// <summary>
@@ -81,14 +85,12 @@ public class FormsController(
             await using var tr = await dbContext.Database.BeginTransactionAsync();
             var newForm = FromDto(request);
 
-            await dbContext.Forms.AddAsync(newForm);
-            await dbContext.SaveChangesAsync();
+            await formsService.SaveForm(dbContext, newForm);
 
             await tr.CommitAsync();
-
             return CreatedAtAction(nameof(GetForm),
-                new { id = newForm.IdGuid },
-                new CreateFormResponse(newForm.IdGuid));
+                                   new { id = newForm.IdGuid },
+                                   new CreateFormResponse(newForm.IdGuid));
         }
         catch (DbUpdateException)
         {
@@ -96,7 +98,7 @@ public class FormsController(
         }
         catch (Exception ex)
         {
-            logger.LogError(new(2,"error"), ex, "Error processing form creation request.");
+            logger.LogError(new(2, "error"), ex, "Error processing form creation request.");
             return BadRequest();
         }
     }
@@ -117,5 +119,3 @@ public class FormsController(
         return res;
     }
 }
-
-

@@ -42,8 +42,4 @@
         <ProjectReference Include="..\ModelConfigurationGenerator\ModelConfigurationGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\Forms\Service\" />
-    </ItemGroup>
-
 </Project>
