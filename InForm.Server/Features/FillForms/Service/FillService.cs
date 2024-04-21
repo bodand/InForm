@@ -24,7 +24,8 @@ public class FillService(
                                        Guid formId,
                                        IEnumerable<FillElement> fillElements)
     {
-        var form = await dbContext.Forms.SingleAsync(x => x.IdGuid == formId);
+        var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
+        if (form is null) throw new EntityNotFoundException();
 
         var fillObj = new Fill();
         var fills = fillElements.OrderBy(x => x.Id);
@@ -48,7 +49,8 @@ public class FillService(
     public async Task<(Form, IEnumerable<ElementResponse>)>
         GetFormFillData(InFormDbContext dbContext, Guid formId, string? password)
     {
-        var form = await dbContext.Forms.SingleAsync(x => x.IdGuid == formId);
+        var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
+        if (form is null) throw new EntityNotFoundException();
 
         if (form.PasswordHash is {} hash)
         {

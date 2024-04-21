@@ -52,9 +52,13 @@ public class FillsController(
             await tr.CommitAsync();
             return Accepted();
         }
-        catch (InvalidOperationException)
+        catch (EntityNotFoundException)
         {
             return NotFound();
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest();
         }
     }
 
@@ -90,14 +94,17 @@ public class FillsController(
             await tr.CommitAsync();
             return new RetrieveFillsResponse(form.Title, form.Subtitle, [..responses]);
         }
-        catch (InvalidOperationException)
+        catch (EntityNotFoundException)
         {
             return NotFound();
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest();
         }
         catch (InvalidCredentialException)
         {
             return Unauthorized();
         }
     }
-
 }
