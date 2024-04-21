@@ -1,6 +1,6 @@
 = InForm
 
-InForm is an open source form creation servicce. 
+InForm is an open source form creation service.
 It works in a fully anonymous way, without the burden of having to create a user, and completely free of any personal trackers.
 
 == Features
