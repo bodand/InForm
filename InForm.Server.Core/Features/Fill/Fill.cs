@@ -55,6 +55,11 @@ public record StringFillElement(
     }
 }
 
+/// <summary>
+///     The fill element representing the fill-data for a multi-choice element.
+/// </summary>
+/// <param name="Id">The identifier of the form-element to be filled.</param>
+/// <param name="Selected">A list of selected options.</param>
 public record MultiChoiceFillElement(
     long Id,
     List<string> Selected

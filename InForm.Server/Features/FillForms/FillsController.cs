@@ -3,8 +3,11 @@ using InForm.Server.Core.Features.Fill;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
 using InForm.Server.Features.FillForms.Db;
+using InForm.Server.Features.FillForms.Service;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Authentication;
 
 namespace InForm.Server.Features.FillForms;
 
@@ -17,15 +20,17 @@ namespace InForm.Server.Features.FillForms;
 [Produces("application/json")]
 public class FillsController(
     InFormDbContext dbContext,
-    IPasswordHasher passwordHasher
-) : ControllerBase
-{
+    IFillService fillService
+) : ControllerBase {
     /// <summary>
     ///     Adds a set of fill data to the given form.
     ///     The input is validated according to the same rules as it was done 
     ///     on the client side to ensure consistency.
     /// </summary>
     /// <param name="formId">The id of the form to add a fill to.</param>
+    /// <param name="request">
+    ///     The request body containing the set of data to fill the form with.
+    /// </param>
     /// <response code="202">The fill has been successfully submitted.</response>
     /// <response code="400">The request's and the URI's formId mismatches.</response>
     /// <response code="404">The given form does not exist.</response>
@@ -42,19 +47,8 @@ public class FillsController(
             if (formId != request.FormId) return BadRequest();
             await using var tr = await dbContext.Database.BeginTransactionAsync();
 
-            var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
-            if (form is null) return NotFound();
+            await fillService.FillFormWithData(dbContext, formId, request.Elements);
 
-            var fillObj = new Fill();
-            var fills = request.Elements.OrderBy(x => x.Id);
-
-            var formElements = await dbContext.LoadAllElementsForForm(form);
-            var elementVisitors = formElements.OrderBy(x => x.Id).Select(x => new FillDataDtoInjectorVisitor(fillObj, x));
-
-            elementVisitors.Zip(fills).AsParallel().ForAll(AddWithVisitor);
-
-            dbContext.UpdateRange(formElements);
-            await dbContext.SaveChangesAsync();
             await tr.CommitAsync();
             return Accepted();
         }
@@ -63,53 +57,52 @@ public class FillsController(
             // todo log this
             return BadRequest();
         }
-    }
-
-    private static void AddWithVisitor((FillDataDtoInjectorVisitor, FillElement) pair)
-    {
-        var (visitor, fill) = pair;
-        fill.Accept(visitor);
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     /// <summary> 
     ///     Retrieves the list of fill values for a given form.
     /// </summary>
     /// <param name="formId">The id of the form to add a fill to.</param>
+    /// <param name="request">
+    ///     The request body contianing the id to retrieve and the optional password.
+    /// </param>
     /// <response code="200">The filled in responses of the form.</response>
-    /// <response code="401">The form's responses are not public and an invalid password was provided.</response>
+    /// <response code="400">The request's and the URI's formId mismatches.</response>
+    /// <response code="401">
+    ///     The form's responses are not public and an invalid password was provided.
+    /// </response>
     /// <response code="404">The given form does not exist.</response>
     [HttpPost(":retrieve")]
     [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<RetrieveFillsResponse>> GetFillData(Guid formId, [FromBody] RetrieveFillsRequest request)
+    public async Task<ActionResult<RetrieveFillsResponse>> GetFillData(Guid formId,
+                                                                       [FromBody] RetrieveFillsRequest request)
     {
-        await using var tr = await dbContext.Database.BeginTransactionAsync();
-
-        var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
-        if (form is null) return NotFound();
-
-        if (form.PasswordHash is { } hash)
+        try
         {
-            var passResult = passwordHasher.VerifyAndUpdate(request.Password ?? string.Empty, hash);
-            if (!passResult.Verified) return Unauthorized();
+            if (formId != request.Id) return BadRequest();
+            await using var tr = await dbContext.Database.BeginTransactionAsync();
 
-            if (passResult is { UpdatedHash: { } newHash })
-            {
-                form.PasswordHash = newHash;
-                await dbContext.SaveChangesAsync();
-            }
+            var (form, responses) =
+                await fillService.GetFormFillData(dbContext, formId, request.Password);
+
+            await tr.CommitAsync();
+            return new RetrieveFillsResponse(form.Title, form.Subtitle, [..responses]);
         }
-
-        var formElements = await dbContext.LoadAllElementsForFormWithData(form);
-        IVisitor<ElementResponse> visitor = new ToResponseDtoVisitor();
-        var response = new RetrieveFillsResponse(
-            form.Title,
-            form.Subtitle,
-            [.. formElements.Select(x => x.Accept(visitor))]);
-
-        await tr.CommitAsync();
-        return response;
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+        catch (InvalidCredentialException)
+        {
+            return Unauthorized();
+        }
     }
 
 }

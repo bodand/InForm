@@ -2,6 +2,7 @@ using InForm.Server.Db;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using InForm.Server.Features.Common;
+using InForm.Server.Features.FillForms.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -30,7 +31,9 @@ builder.Services.AddSwaggerGen(ops =>
 });
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<IFillService, FillService>();
 builder.Services.AddSingleton<IPasswordHasher, SodiumPasswordHasher>();
+
 builder.Services.AddDbContext<InFormDbContext>(ops =>
 {
 	ops.UseNpgsql(config.GetConnectionString("InFormDb"));
