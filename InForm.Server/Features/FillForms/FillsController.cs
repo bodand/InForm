@@ -52,11 +52,6 @@ public class FillsController(
             await tr.CommitAsync();
             return Accepted();
         }
-        catch (InvalidElementTypeException)
-        {
-            // todo log this
-            return BadRequest();
-        }
         catch (InvalidOperationException)
         {
             return NotFound();
