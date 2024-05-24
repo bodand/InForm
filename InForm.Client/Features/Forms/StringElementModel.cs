@@ -50,7 +50,7 @@ public class StringValueValidator : AbstractValidator<StringElementFillData?>
     {
         When(x => x?.Model.Required ?? false, () =>
         {
-            RuleFor(x => x.Value).NotEmpty().WithMessage("This field is required");
+            RuleFor(x => x!.Value).NotEmpty().WithMessage("This field is required");
         });
 
         When(x => x?.Model.MaxAnswerLength.HasValue ?? false, () =>

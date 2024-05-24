@@ -27,7 +27,7 @@
 	[Parameter, EditorRequired]
 	public string Label { get; set; } = default!;
 
-	protected override bool TryParseValueFromString(string? value, out int result, out string? validationErrorMessage)
+	protected override bool TryParseValueFromString(string? value, out int result, out string validationErrorMessage)
 	{
 		throw new NotImplementedException();
 	}

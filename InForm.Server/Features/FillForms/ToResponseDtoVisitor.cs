@@ -26,7 +26,7 @@ internal class ToResponseDtoVisitor :
         var query =
             from fd in visited.FillData
             from selected in fd.Selected
-            let selStr = selected.Option.Value
+            let selStr = selected.Option!.Value
             group selStr by selStr into respGroup
             select new { Value = respGroup.Key, Count = respGroup.Count() };
         var selects = query.ToDictionary(x => x.Value, x => x.Count);

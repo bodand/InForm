@@ -1,0 +1,179 @@
+env:
+  DOTNET_ENVIRONMENT: CI
+jobs:
+  build:
+    container: bitnami/dotnet-sdk:8.0.204
+    runs-on:
+    - ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Restore dotnet tools
+      run: cd InForm.Server && dotnet tool restore
+    - name: Generate migration bundle
+      run: cd InForm.Server && dotnet ef migrations bundle -o InForm.Migrations && tar czf ../InForm.Migrations.tgz InForm.Migrations appsettings.*.json
+    - name: Upload bundle artifact
+      uses: actions/upload-artifact@v4
+      with:
+        compression-level: 0
+        name: InForm.Migrations.tgz
+        overwrite: true
+        path: InForm.Migrations.tgz
+  load-tests:
+    container: bitnami/dotnet-sdk:8.0.204
+    needs:
+    - build
+    runs-on:
+    - ubuntu-latest
+    services:
+      test-db:
+        env:
+          POSTGRES_PASSWORD: postgres
+        image: postgres:16
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Download migrations bundle
+      uses: actions/download-artifact@v4
+      with:
+        name: InForm.Migrations.tgz
+    - name: Apply migrations bundle
+      run: tar xzf InForm.Migrations.tgz && ./InForm.Migrations
+    - name: Start InForm.Server
+      run: dotnet run -c Release -v m --project InForm.Server -lp ci &
+    - name: Install system packages
+      run: apt update && apt install -y python3.11 python3-pip
+    - name: Setup python packages
+      run: python3.11 -m pip install -r requirements.txt --break-system-packages
+    - name: Do load tests
+      run: locust --headless -f ci-utils/locustfile.py -H http://localhost:9000 -t 2m -u 3000 -r 100 --logfile locust.log --csv api
+    - name: Stop server
+      run: pkill -INT dotnet
+    - name: Parse load test results
+      run: python3.11 ci-utils/parse-locust.py api_stats.csv > load-stats.md
+    - if: always() && github.event_name == 'pull_request'
+      name: Comment statistics to PR
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        comment_tag: load-statistics-table
+        filePath: load-stats.md
+    - if: failure()
+      name: Upload locust logs to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: locust.log
+        overwrite: true
+        path: locust.log
+  packages-test:
+    container: bitnami/dotnet-sdk:8.0.204
+    runs-on:
+    - ubuntu-latest
+    steps:
+    - name: Install system packages
+      run: apt update && apt install -y jq python3.11
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Restore
+      run: dotnet restore
+    - name: List vulnerable dependencies
+      run: sh ci-utils/list-pkg.sh vulnerable
+    - name: List outdated dependencies
+      run: sh ci-utils/list-pkg.sh outdated
+    - name: List deprecated dependencies
+      run: sh ci-utils/list-pkg.sh deprecated
+    - name: Fromat depdendency report
+      run: python3.11 ci-utils/parse-pkgs.py vulnerable.json outdated.json deprecated.json
+    - if: always() && github.event_name == 'pull_request'
+      name: Comment statistics to PR
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        comment_tag: dotnet-pkgs-report
+        filePath: dotnet-pkgs.md
+  tests:
+    container: bitnami/dotnet-sdk:8.0.204
+    needs:
+    - build
+    runs-on:
+    - ubuntu-latest
+    services:
+      test-db:
+        env:
+          POSTGRES_PASSWORD: postgres
+        image: postgres:16
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Download migrations bundle
+      uses: actions/download-artifact@v4
+      with:
+        name: InForm.Migrations.tgz
+    - name: Apply migrations bundle
+      run: tar xzf InForm.Migrations.tgz && ./InForm.Migrations
+    - name: Tests
+      run: dotnet test --no-build --verbosity normal
+  zap-test:
+    container: bitnami/dotnet-sdk:8.0.204
+    needs:
+    - build
+    runs-on:
+    - ubuntu-latest
+    services:
+      test-db:
+        env:
+          POSTGRES_PASSWORD: postgres
+        image: postgres:16
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Download migrations bundle
+      uses: actions/download-artifact@v4
+      with:
+        name: InForm.Migrations.tgz
+    - name: Apply migrations bundle
+      run: tar xzf InForm.Migrations.tgz && ./InForm.Migrations
+    - name: Start InForm.Server
+      run: dotnet run -c Release -v m --project InForm.Server -lp ci &
+    - name: Start InForm.Server
+      run: dotnet run -c Release -v m --project InForm.Web -lp ci &
+    - name: Install system packages
+      run: apt update && apt install -y openjdk-17-jdk curl firefox-esr chromium
+    - name: Install ZAP
+      run: 'curl -L https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz | tar xz '
+    - name: ''
+      run: cd ZAP_2.14.0 && ./zap.sh -cmd -autorun ../ci-utils/zap.yaml
+    - name: Stop server
+      run: pkill -INT dotnet
+    - if: always() && github.event_name == 'pull_request'
+      name: Comment statistics to PR
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        comment_tag: zap-report
+        filePath: /root/zap-report.md
+name: InForm CI
+on:
+  pull_request:
+    branches:
+    - main
+  push:
+    branches:
+    - main

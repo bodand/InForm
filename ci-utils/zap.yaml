@@ -1,0 +1,75 @@
+---
+env:
+  contexts:
+  - name: "Default Context"
+    urls:
+    - "http://localhost:9000/"
+    - "http://localhost:9001/"
+    includePaths:
+    - "http://localhost:9000/.*"
+    - "http://localhost:9001/.*"
+    excludePaths: []
+    authentication:
+      parameters: {}
+      verification:
+        method: "response"
+        pollFrequency: 60
+        pollUnits: "requests"
+    sessionManagement:
+      method: "cookie"
+      parameters: {}
+    technology:
+      exclude: []
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+  vars: {}
+jobs:
+- parameters:
+    scanOnlyInScope: true
+    enableTags: false
+    disableAllRules: false
+  rules: []
+  type: "passiveScan-config"
+  name: "passiveScan-config"
+- parameters:
+    apiFile: ""
+    apiUrl: "http://localhost:9000/swagger/v1/swagger.json"
+    targetUrl: ""
+  type: "openapi"
+  name: "openapi"
+- parameters: {}
+  type: "passiveScan-wait"
+  name: "passiveScan-wait"
+- parameters: {}
+  policyDefinition:
+    rules: []
+  type: "activeScan"
+  name: "activeScan"
+- parameters:
+    template: "traditional-md"
+    reportDir: ""
+    reportFile: "zap-report.md"
+    reportTitle: "ZAP Scanning Report"
+    reportDescription: ""
+    displayReport: false
+  risks:
+  - "info"
+  - "low"
+  - "medium"
+  - "high"
+  confidences:
+  - "falsepositive"
+  - "low"
+  - "medium"
+  - "high"
+  - "confirmed"
+  sections:
+  - "instancecount"
+  - "alertdetails"
+  - "alertcount"
+  sites: []
+  type: "report"
+  name: "report"
+

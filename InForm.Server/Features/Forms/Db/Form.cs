@@ -1,3 +1,4 @@
+using InForm.Server.Features.Common.Security;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace InForm.Server.Features.Forms.Db;
 ///     A form entity stored in the database.
 ///     Represents a fillable top-level entity in InForm.
 /// </summary>
-public class Form
+public class Form : IPasswordControlled
 {
     /// <summary>
     ///     The database identifier.

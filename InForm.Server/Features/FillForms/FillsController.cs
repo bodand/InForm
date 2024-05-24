@@ -92,7 +92,7 @@ public class FillsController(
                 await fillService.GetFormFillData(dbContext, formId, request.Password);
 
             await tr.CommitAsync();
-            return new RetrieveFillsResponse(form.Title, form.Subtitle, [..responses]);
+            return Ok(new RetrieveFillsResponse(form.Title, form.Subtitle, [..responses]));
         }
         catch (EntityNotFoundException)
         {

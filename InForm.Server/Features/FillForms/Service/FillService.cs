@@ -2,6 +2,7 @@
 using InForm.Server.Core.Features.Fill;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
+using InForm.Server.Features.Common.Security;
 using InForm.Server.Features.FillForms.Db;
 using InForm.Server.Features.Forms.Db;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace InForm.Server.Features.FillForms.Service;
 /// </summary>
 /// <param name="passwordHasher">The low-level password hashing utility.</param>
 public class FillService(
-    IPasswordHasher passwordHasher
+    IPasswordHandler passwordHandler
 ) : IFillService {
 
     /// <inheritdoc/>
@@ -52,17 +53,8 @@ public class FillService(
         var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
         if (form is null) throw new EntityNotFoundException();
 
-        if (form.PasswordHash is {} hash)
-        {
-            var passResult = passwordHasher.VerifyAndUpdate(password ?? string.Empty, hash);
-            if (!passResult.Verified) throw new InvalidCredentialException();
-
-            if (passResult is { UpdatedHash: {} newHash })
-            {
-                form.PasswordHash = newHash;
-                await dbContext.SaveChangesAsync();
-            }
-        }
+        form = await passwordHandler.Verify(form, password, dbContext);
+        if (form is null) throw new InvalidCredentialException();
 
         var formElements = await dbContext.LoadAllElementsForFormWithData(form);
         IVisitor<ElementResponse> visitor = new ToResponseDtoVisitor();

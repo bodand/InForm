@@ -4,9 +4,11 @@ using System.Text.Json.Serialization;
 namespace InForm.Server.Core.Features.Fill;
 
 /// <summary>
-///     The request object for querying the answers of a form
+///     The request object for querying the answers of a form, optionally
+///     requires the password the form was created with.
 /// </summary>
-/// <param name="Password">Optional password</param>
+/// <param name="Id">The identifier of the form.</param>
+/// <param name="Password">Optional password.</param>
 public readonly record struct RetrieveFillsRequest(
     Guid Id,
     string? Password
@@ -25,9 +27,12 @@ public readonly record struct RetrieveFillsResponse(
 );
 
 /// <summary>
-///     Base class of element specific answers
+///     Base class of element specific answers, enforces the visitation
+///     functions to be implemented.
 /// </summary>
 /// <param name="Id">The identifier of the form element this response is for.</param>
+/// <param name="Title">The title of the element.</param>
+/// <param name="Subtitle">The optional subtitle of the element.</param>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$t")]
 [JsonDerivedType(typeof(StringElementResponse), "string")]
 [JsonDerivedType(typeof(MultiChoiceElementResponse), "mc")]
@@ -87,7 +92,7 @@ public record StringElementResponse(
 /// <param name="Responses">The dictionary of responses with their selection cardinality.</param>
 /// <remarks>
 ///     Compared to a <see cref="StringElementResponse"/> entity, options in the related form element are always
-///     listed. Therefore there can be responses whose cardinality is 0.
+///     listed. Therefore, there can be responses whose cardinality is 0.
 /// </remarks>
 public record MultiChoiceElementResponse(
     long Id,

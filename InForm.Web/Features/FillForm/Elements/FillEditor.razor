@@ -18,7 +18,7 @@
 @code {
     protected override void OnParametersSet() => CurrentValue?.MakeFillable();
 
-    protected override bool TryParseValueFromString(string value,
+    protected override bool TryParseValueFromString(string? value,
                                                     out ElementModel result,
                                                     out string validationErrorMessage) => throw new NotImplementedException();
 }

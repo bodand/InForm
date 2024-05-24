@@ -19,10 +19,23 @@ public partial class InFormDbContext {
     }
 
 #nullable disable
-    public DbSet<FillData> FillData { get; set; }
+    /// <summary>
+    ///     The db set for bare fill data entities.
+    /// </summary>
+    public virtual DbSet<FillData> FillData { get; set; }
 
-    public DbSet<StringFillData> StringFillData { get; set; }
+    /// <summary>
+    ///     The db set for the string fill data entities.
+    /// </summary>
+    public virtual DbSet<StringFillData> StringFillData { get; set; }
 
-    public DbSet<MultiChoiceFillData> MultiChoiceFillDatas { get; set; }
-    public DbSet<MultiChoiceFillSelection> MultiChoiceFillSelections { get; set; }
+    /// <summary>
+    ///     The db set for the multi choice data entities.
+    /// </summary>
+    public virtual DbSet<MultiChoiceFillData> MultiChoiceFillDatas { get; set; }
+
+    /// <summary>
+    ///     The db set for the multi choice fill selection entities.
+    /// </summary>
+    public virtual DbSet<MultiChoiceFillSelection> MultiChoiceFillSelections { get; set; }
 }

@@ -9,8 +9,7 @@ namespace InForm.Server.Features.Forms.Db;
 ///     The type of the value asked of the filler is specified by the 
 ///     concrete type inherited from this type.
 /// </summary>
-public abstract class FormElementBase : IVisitable
-{
+public abstract class FormElementBase : IVisitable {
     /// <summary>
     ///     The database identity.
     /// </summary>
@@ -36,6 +35,9 @@ public abstract class FormElementBase : IVisitable
     /// </summary>
     public bool Required { get; set; }
 
+    /// <summary>
+    ///     The database id of the form this element is a part of.
+    /// </summary>
     public long ParentFormId { get; set; }
 
     /// <summary>

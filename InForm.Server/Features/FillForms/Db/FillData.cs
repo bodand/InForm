@@ -12,7 +12,13 @@ public abstract class FillData
     /// </summary>
     public long Id { get; set; }
 
+    /// <summary>
+    ///     The identifier of the fill session this data is part of.
+    /// </summary>
     public long FillId { get; set; }
 
+    /// <summary>
+    ///     Navigation to the fill session this data is part of.
+    /// </summary>
     public Fill? Fill { get; set; }
 }

@@ -33,10 +33,10 @@
     [Parameter, EditorRequired]
     public string Label { get; set; } = default!;
 
-    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
     {
         result = value ?? string.Empty;
-        validationErrorMessage = null;
+        validationErrorMessage = null!; // actually nullable, Blazor doesn't mark it
         return true;
     }
 

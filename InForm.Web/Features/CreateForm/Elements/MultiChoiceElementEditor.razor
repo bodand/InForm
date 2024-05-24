@@ -82,6 +82,6 @@
     private string IndexToOptionId(int idx) => $"mc_opt_{idx}";
     private string IndexToOptionLabel(int idx) => $"Option {idx}";
 
-    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementModel result, out string? validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementModel result, out string validationErrorMessage)
         => throw new NotImplementedException();
 }

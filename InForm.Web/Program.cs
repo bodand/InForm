@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+var config = builder.Configuration;
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var config = builder.Configuration;
-
 builder.Services.AddInFormServer((_, httpClient) =>
 {
-	httpClient.BaseAddress = new(config["InFormServer:Url"] 
+	Console.WriteLine(config["InFormServer:Url"]);
+	httpClient.BaseAddress = new(config["InFormServer:Url"]
 								 ?? builder.HostEnvironment.BaseAddress);
 });
 

@@ -1,8 +1,8 @@
-﻿using System.Text;
-using Geralt;
+﻿using Geralt;
 using Microsoft.Extensions.Options;
+using System.Text;
 
-namespace InForm.Server.Features.Common;
+namespace InForm.Server.Features.Common.Security;
 
 internal class SodiumPasswordHasher(IOptionsMonitor<SodiumHasherOptions> options) : IPasswordHasher
 {

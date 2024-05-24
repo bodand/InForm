@@ -2,6 +2,7 @@
 using InForm.Server.Core.Features.Forms;
 using InForm.Server.Db;
 using InForm.Server.Features.Common;
+using InForm.Server.Features.Common.Security;
 using InForm.Server.Features.Forms.Db;
 using InForm.Server.Features.Forms.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,11 @@ namespace InForm.Server.Features.Forms;
 ///     access this functionality through the REST API implemented by this controller.
 /// </summary>
 /// <param name="dbContext">The database access object.</param>
+/// <param name="passwordHasher">The hasher utility for passwords.</param>
+/// <param name="formsService">
+///     The service whose services are published through the controller.
+/// </param>
+/// <param name="logger">The logger to use.</param>
 [Route("/api/forms")]
 [ApiController]
 [Consumes("application/json")]

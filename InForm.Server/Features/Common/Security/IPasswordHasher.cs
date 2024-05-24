@@ -1,4 +1,4 @@
-﻿namespace InForm.Server.Features.Common;
+﻿namespace InForm.Server.Features.Common.Security;
 
 /// <summary>
 ///     Interface for securely hashing passwords.

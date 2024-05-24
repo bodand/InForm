@@ -58,7 +58,7 @@ else
         }
     }
 
-    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementFillData result, out string? validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out MultiChoiceElementFillData result, out string validationErrorMessage)
         => throw new NotImplementedException();
 
     private void SelectionChanged(string value)

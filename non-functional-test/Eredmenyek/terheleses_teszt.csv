@@ -1,0 +1,3 @@
+Label;# Samples;Average;Min;Max;Std. Dev.;Error %;Throughput;Received KB/sec;Sent KB/sec;Avg. Bytes
+HTTP Request;100000;739;4;6719;402.26;0.000%;1156.01591;1502.59;130.95;1331.0
+TOTAL;100000;739;4;6719;402.26;0.000%;1156.01591;1502.59;130.95;1331.0

@@ -17,6 +17,7 @@ public class StringFillData : FillData
     ///     The string value provided by the filler.
     ///     Null if the value is not required by the parent element, and the filler did not fill this value.
     /// </summary>
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? Value { get; set; }
 }
 
