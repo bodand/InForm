@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using EntityFrameworkCoreMock;
+using InForm.Server.Features.Common.Security;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 

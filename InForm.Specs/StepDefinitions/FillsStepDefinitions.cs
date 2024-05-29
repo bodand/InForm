@@ -1,17 +1,13 @@
 using EntityFrameworkCoreMock;
 using InForm.Server.Core.Features.Fill;
 using InForm.Server.Db;
-using InForm.Server.Features.Common;
+using InForm.Server.Features.Common.Security;
 using InForm.Server.Features.FillForms;
-using InForm.Server.Features.FillForms.Db;
 using InForm.Server.Features.FillForms.Service;
 using InForm.Server.Features.Forms.Db;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System;
-using TechTalk.SpecFlow;
 
 namespace InForm.Specs.StepDefinitions
 {
@@ -39,7 +35,7 @@ namespace InForm.Specs.StepDefinitions
             pwhasher = new Mock<IPasswordHasher>();
             pwhasher.Setup(x => x.Hash(It.IsAny<string>())).Returns(It.IsAny<string>);
             pwhasher.Setup(x => x.VerifyAndUpdate(It.Is<string>(x => x.Contains("test")), It.IsAny<string>())).Returns(new HashVerificationResult(true,null));
-            fillsController = new FillsController(dbContext: context.Object, fillService: new FillService(pwhasher.Object));
+            fillsController = new FillsController(dbContext: context.Object, fillService: new FillService(new BasicPasswordHandler(pwhasher.Object)));
         }
 
         private readonly Guid testGuid;
