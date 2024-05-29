@@ -53,8 +53,11 @@ public class FillService(
         var form = await dbContext.Forms.SingleOrDefaultAsync(x => x.IdGuid == formId);
         if (form is null) throw new EntityNotFoundException();
 
-        form = await passwordHandler.Verify(form, password, dbContext);
-        if (form is null) throw new InvalidCredentialException();
+        if (password is not null)
+        {
+            form = await passwordHandler.Verify(form, password, dbContext);
+            if (form is null) throw new InvalidCredentialException();
+        }
 
         var formElements = await dbContext.LoadAllElementsForFormWithData(form);
         IVisitor<ElementResponse> visitor = new ToResponseDtoVisitor();

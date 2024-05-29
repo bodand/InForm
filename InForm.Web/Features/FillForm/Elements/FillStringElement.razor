@@ -2,6 +2,7 @@
 
 <TextEntry Id="str_response"
            Label="Response"
+           Multiline="CurrentValue!.Model.TextArea"
            @bind-Value="CurrentValue!.Value"
            ValidationFor="@(() => CurrentValue!.Value)"/>
 
@@ -11,3 +12,4 @@
                                                     out string validationErrorMessage)
         => throw new NotImplementedException();
 }
+
