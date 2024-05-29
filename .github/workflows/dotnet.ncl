@@ -99,8 +99,8 @@ in
 {
   name = "InForm CI",
   on = {
-    push = { branches = ["main"] },
-    pull_request = { branches = ["main"] }
+    push = { branches = ["trunk"] },
+    pull_request = { branches = ["trunk"] }
   },
   env = {
     DOTNET_ENVIRONMENT = "CI"
