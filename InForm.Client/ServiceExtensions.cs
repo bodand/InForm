@@ -2,22 +2,21 @@
 using InForm.Client.Features.Forms.Contracts.Impl;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace InForm.Client
-{
-    public static class ServiceExtensions
-	{
-		public static IServiceCollection AddInFormServer(this IServiceCollection services)
-		{
-			services.AddInFormServer((_, _) => { });
-			return services;
-		}
+namespace InForm.Client;
 
-		public static IServiceCollection AddInFormServer(this IServiceCollection services,
-													     Action<IServiceProvider, HttpClient> config)
-		{
-			services.AddHttpClient<IFormsService, FormsService>(config);
-			services.AddHttpClient<IFillService, FillService>(config);
-			return services;
-		}
+public static class ServiceExtensions
+{
+	public static IServiceCollection AddInFormServer(this IServiceCollection services)
+	{
+		services.AddInFormServer((_, _) => { });
+		return services;
+	}
+
+	public static IServiceCollection AddInFormServer(this IServiceCollection services,
+	                                                 Action<IServiceProvider, HttpClient> config)
+	{
+		services.AddHttpClient<IFormsService, FormsService>(config);
+		services.AddHttpClient<IFillService, FillService>(config);
+		return services;
 	}
 }
